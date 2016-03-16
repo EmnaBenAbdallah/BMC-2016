@@ -1,6 +1,6 @@
 % Section des résultat: Application sur des réseaux biologiques
 
-The time complexities estimated from the results of computational experiments are a little different from those obtained by theoretical analysis. However, this is reasonable since, in our theoretical analysis, we assumed that the number of genes is very large.
+The time complexities estimated from the results of computational experiments are a little different from those obtained by theoretical analysis. \Maxime{Qu'est-ce que la phrase précédente signifie ? Qu'entend-on par “theoretical analysis” ?} However, this is reasonable since, in our theoretical analysis, we assumed that the number of genes is very large.
 %In this section, we. 
 All experiments were run on a PC with Pentium VII 3 GHz processor and 16 Go memory.
 
@@ -13,7 +13,8 @@ We have two attractors: $(2000)$ is an attractor of size $1$ i.e a fixed point a
    \includegraphics{figures/lampdaphage-STG.pdf}
 \end{figure}
 
-Like mentioned above, using our method we are not obliged to have the whole State Transition Graph. So that for finding these attractors (size $1$ and size $2$), it suffisent to compute only graphs of size $2$. 
+Like mentioned above, using our method we are not obliged to have the whole State Transition Graph. So that for finding these attractors (size $1$ and size $2$), it sufficient to compute only graphs of size $2$.
+\Maxime{Ici, il faudrait répéter certains éléments de la description de la Figure 3 pour une meilleure compréhension.}
 
 This network was modeled into an Automata Network ($4$ sorts, $48$ processes and $49$ actions) to be analysed later. The result that we get are the following: \\
 \textit{ Lambda Phage Fixed points:} $\PHstate{CI_2, CII_0, Cro_0, N_0}$
@@ -30,10 +31,10 @@ selectProcSt(activeProc("CI",0),1) selectProcSt(activeProc("CII",0),1)
 selectProcSt(activeProc("Cro",3),1) selectProcSt(activeProc("N",0),1)
  \end{lstlisting}
 
-So we obtain $1$ answer sets for each size that match the expected result. The program needed only $10$ ms for finding the fixed point and $19$ms for the attractor.
+Thus we obtain $1$ answer set for each size that match the expected results. The program needed only $10$ms for finding the fixed point and $19$ms for the attractor.
 
 \subsection{Benchmarks}
-As benchmarks we use existing Multi-valued networks models of real organisms shown in Table \ref{tab:models}\footnote{All programs and benchmarks are available at http://git.irccyn.ec-nantes.fr/benabdal/ph-properties-with-asp}: the bacteriophage lambda phage \cite{thieffry1995dynamical}, the Hedgehog Signalling Pathway (\Emna{à revoir la réf} \cite{stecca2010context}), mTOR pathway in survival mechanisms \cite{javle2010inhibition} (\Emna{en cours de traduction}) and egf-tnf which is a mammalian signalling pathways induced by the Epidermal Growth Factor (EGF) and Tumour Necrosis Factor alpha (TNF$\alpha$) \cite{chaouiya2013sbml}.
+As benchmarks we use existing Multi-valued networks models of real organisms shown in Table \ref{tab:models}\benchmarksfootnote: the bacteriophage lambda phage \cite{thieffry1995dynamical}, the Hedgehog Signalling Pathway (\Emna{à revoir la réf} \cite{stecca2010context}), mTOR pathway in survival mechanisms \cite{javle2010inhibition} (\Emna{en cours de traduction}) and egf-tnf which is a mammalian signalling pathways induced by the Epidermal Growth Factor (EGF) and Tumour Necrosis Factor alpha (TNF$\alpha$) \cite{chaouiya2013sbml}.
 We have constructed the input descriptions of these models, the automata networks, manually from the data in the corresponding papers.
 
 \begin{changemargin}{-3cm}{-3cm}
@@ -79,7 +80,7 @@ For each of them, this table gives the number of biological components
 in the original representation,
 and the number of sorts, the number of processes
 and the number of states in the PH model.
-Then, the next two columns give the computation time for the enumeration of all fixed points and the number of results returned. Finally, the last three columns give the computation time for the enumeration of all attractors, their size and the number of finded attractors for each size.
+Then, the next two columns give the computation time for the enumeration of all fixed points and the number of results returned. Finally, the last three columns give the computation time for the enumeration of all attractors, their size and the number of found attractors for each size.
 }
 \end{center}
 \end{table*}
