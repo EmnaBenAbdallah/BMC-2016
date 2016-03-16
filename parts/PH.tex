@@ -17,10 +17,10 @@ and we call the processes of $A$, $b_j$ and $b_k$  respectively \emph{hitters}, 
 We also call a \emph{self-hit} any action with one hitter such that the hitter and target sorts are the same,
 that is, of the form: $\PHfrappe{b_j}{b_j}{b_k}$.
 
-The PH is therefore a restriction of asynchronous automata networks, where each transition
-changes the local state of exactly one automaton,
-and is triggered by the local states of at most two distinct automata.
-This restriction on the actions was chosen to permit
+The PH is therefore a restriction of synchronous automata networks with each transition
+changing the local state of exactly one automaton,
+therefore being an asynchronous restriction.
+This restriction on the actions was originally chosen to permit
 the development of efficient static analysis methods
 based on abstract interpretation~\cite{PMR12-MSCS}.
 
@@ -32,8 +32,9 @@ based on abstract interpretation~\cite{PMR12-MSCS}.
       $\PHl_a = \{a_0,\dots,a_{l_a}\}$
       is the finite set of \emph{processes} of sort $a\in\Sigma$
       and $l_a$ is a positive integer, with $a\neq b\Rightarrow \PHl_a \cap \PHl_b = \emptyset$;
-    \item $\PHa$ = \{ $\PHfrappe{A}{b_j}{b_k}$ with $A \in \PHl^{\diamond} \wedge b \in \PHs \wedge b_j \neq b_k \wedge$ if $b_j \in A \Rightarrow A=b_j$\} is the finite set of \emph{actions}.
-    With $\PHl^{\diamond}$ the set of all the sub-states of $\PHl$.    
+    \item $\PHa$ = \{ $\PHfrappe{A}{b_j}{b_k}$ with $A \in \PHl^{\diamond} \wedge b \in \PHs \wedge b_j \neq b_k \wedge$ if $b_j \in A \Rightarrow A=b_j$\} is the finite set of \emph{actions},
+    with $\PHl^{\diamond}$ the set of all the sub-states of $\PHl$
+    (that is, containing at most one process from each sort).
       %$\PHa$ = \{ $\PHfrappe{A}{b_j}{b_k}$ with $A \in \PHl^{\diamond} \wedge b \in \PHs \wedge b_j \neq b_k \wedge$ if $b_j \in A \Rightarrow A=b_j$ \}.With $\PHl^{\diamond}$ the set of all the sub-states of $\PHl$. 
   \end{itemize}
 \end{definition}
@@ -68,17 +69,17 @@ based on abstract interpretation~\cite{PMR12-MSCS}.
    \TBounce{a_0}{}{a_1}{.south west}
 %	\TBounce{z_0}{bend left=90}{z_1}{.south east}
     ;
-    \TState{a_0, b_0, c_1, d_0, e_0}
+    \TState{a_0, b_0, c_1, d_1, e_0}
   \end{tikzpicture}
   }
   \caption{\label{fig:ph}
-An example of PH model with five sorts: $a$, $b$, $c$, $d$ and $e$. Boxes represent the sorts, the biological components, circles represent the processes (component levels), and the actions that model the dynamic behavior are depicted by pairs of arrows in solid and dotted lines. $a$, $d$, $c$ and $e$ are all either at level $0$ or $1$, and the sort $b$ has $3$ levels $0$, $1$, $2$. The grayed processes stand for the possible initial state $\PHstate{a_0, b_0, c_1, d_0, e_0}$.
+An example of PH model with five sorts: $a$, $b$, $c$, $d$ and $e$. Boxes represent the sorts, the biological components, circles represent the processes (component levels), and the actions that model the dynamic behavior are depicted by pairs of arrows in solid and dotted lines. $a$, $d$, $c$ and $e$ are all either at level $0$ or $1$, and the sort $b$ has $3$ levels $0$, $1$, $2$. The grayed processes stand for the possible initial state $\PHstate{a_0, b_0, c_1, d_1, e_0}$.
   }
 \end{figure}
 
 \end{example}
 
-A state of the network is a set of active processes containing a single process of each sort.
+A \emph{state} of the network is a set of active processes containing a single process of each sort.
 The active process of a given sort $a \in \PHs$ in a state $\PHst \in \PHl$
 is noted $\PHget{\PHst}{a}$.
 For any given process $a_i$ we also note: $a_i \in \PHst$ if and only if $\PHget{\PHst}{a} = a_i$. It means that the biological component $a$ is in the condition labeled $i$ within state $\PHst$.
@@ -86,8 +87,8 @@ For any given process $a_i$ we also note: $a_i \in \PHst$ if and only if $\PHget
 \subsection{Attractors in Process Hitting}
 
 The study of the dynamics of biological networks was the focus of many works, explaining the diversity of network modelings and the different methods developed in order to identify attractors \cite{skodawessely2011finding, zhang2007algorithms, mushthofa2014asp, akutsu2012finding, berntenis2013detection}.
-In this paper we focus on a main property in automata networks: the steady states, the cycles and the attractors . %Then we verify the reachability of these attractors. \\
-In the following, we consider an automata networ modeled in PH $\PH=(\PHs,\PHl,\PHa)$,
+In this paper we focus on several sub-problems related to such this in automata networks: the steady states, the cycles and the attractors. %Then we verify the reachability of these attractors. \\
+In the following, we consider an automata network modeled in PH $\PH=(\PHs,\PHl,\PHa)$,
 and we formally define these properties.
 %How to verify them with the help of ASP is the subject of the rest of this paper.
 %and explain how they could be verified on a such network.
@@ -97,27 +98,30 @@ and we formally define these properties.
 Let $\PH = (\PHs,\PHl,\PHa)$ be a Process Hitting and $\PHst \in \PHl$ a state of $\PH$.
 We say that the action $h = \PHfrappe{a_i}{b_j}{b_k} \in \PHa$
 is \emph{playable in state $\PHst$} if and only if
-$A \subseteq \PHst$ and $b_j \in \PHst$ (\ie$ \forall a_i \in A$, $\PHget{\PHst}{a} = a_i$ and $\PHget{\PHst}{b}=b_j$).
+$A \subseteq \PHst$ and $b_j \in \PHst$ (\ie $\forall a_i \in A$, $\PHget{\PHst}{a} = a_i$ and $\PHget{\PHst}{b}=b_j$).
 \end{definition}
 
-\Emna{A relire} We can consider that the playable actions in a PH state are equivalent to the transitions from a state in the state transition graph.
+The set of playable action in a given PH state give the set of transitions starting from this state in the state-transition graph.
+Indeed, in each state, several action may be playable, but only one is effectively played and is responsible for the evolution of the system from one state to another.
 
- At each state, a couple of actions are playable and they are resposible of the evolution of the system from one state to another.
-
-\begin{Lemma}
+\begin{definition}
 The resulting state after playing an action $h= \PHfrappe{A}{b_j}{b_k}$ in a state $\PHst$
 is called a \emph{successor} of $\PHst$ and
 is denoted by $(\PHst \play h)$,
 where $\PHget{(\PHst \play h)}{b} = b_k$ and
 $\forall c \in \PHs, c \neq b \Rightarrow \PHget{(\PHst \play h)}{c}=\PHget{\PHst}{c}$.
-\end{Lemma}
+\end{definition}
 
-Since we are considering only \emph{asynchronous} updating (\Emna{ref asynchrone}), only one component could change its expression level from a state to its successor (i.e play only one action at each step). In the following, if $\PHst \in \PHl$ is a state,
+Since we are considering only the \emph{asynchronous} updating scheme (\Emna{ref asynchrone}), only one component can change its expression level from a state to its successor (\ie only one action is played at each step). In the following, if $\PHst \in \PHl$ is a state,
 we call \emph{scenario from~$\PHst$}
-any sequence of successively states from $\PHst$ denoted by $\Sce(\PHst)$. \\
+any sequence of successive states from $\PHst$
+obtained by playing some actions successively,
+and we denote $\Sce(\PHst)$ the set of all scenarios from $\PHst$.
 
-In the example of PH model of \pref{fig:ph}, if we consider an initial state $\PHst_0 = \PHstate{a_0, b_0, c_1, d_1, e_0}$ or knowing the sorts order, $\PHst_0 = (0, 0, 1, 1, 0)$ the sequence of the successively states of $\PHst_0$ denoted by $\Sce(\PHst_0)$ is expressed above: \\
-(0, 0, 1, 1,0) $\rightarrowtail$ (0, 0, 1, \underline{0}, 0) $\rightarrowtail $ (\underline{1}, 0, 1, 0, 0) $\rightarrowtail$ (1, \underline{1}, 1, 0, 0) $\rightarrowtail$ (1, 1, 1, 0, \underline{1}). 
+\begin{example}
+In the PH model example of \pref{fig:ph}, if we consider an initial state $\PHst_0 = \PHstate{a_0, b_0, c_1, d_1, e_0}$ ---~or, knowing the sorts order, $\PHst_0 = (0, 0, 1, 1, 0)$~--- the only possible sequence of successive states from $\PHst_0$ in $\Sce(\PHst_0)$ is the following:
+  \[(0, 0, 1, 1,0) \rightarrowtail (0, 0, 1, \underline{0}, 0) \rightarrowtail (\underline{1}, 0, 1, 0, 0) \rightarrowtail (1, \underline{1}, 1, 0, 0) \rightarrowtail (1, 1, 1, 0, \underline{1}).\]
+\end{example}
 
 A \emph{fixed point}, also called \emph{steady state},
 is a state which has no successor,
@@ -132,13 +136,13 @@ and the existence of several of these states denotes a switch in the dynamics~\c
   (or equivalently \emph{steady state})
   if and only if it has no successors.
   In other words, $\PHst$ is a fixed point if and only if no action is playable in this state:
-$$ \forall \PHfrappe{A}{b_j}{b_k} \in \PHa, A \notin \PHst \vee b_j \notin s \enspace. $$
+$$ \forall \PHfrappe{A}{b_j}{b_k} \in \PHa, A \not\subset \PHst \vee b_j \notin s \enspace. $$
 \end{definition}
 
 A finer and more general dynamical property consists in
 the notion of \emph{attractors}.
 Such a property, formally expressed in \pref{def:attractor},
-states that a set of states that are connected and in which the system loops indifinetly (See \ref{fig:transition-graph}). \\
+states that a set of states that are connected and in which the system loops indefinitely (See \ref{fig:transition-graph}).
 
 %states that starting from a given initial state, it is possible
 %to reach a given goal, that is, a state that contains a process
@@ -150,20 +154,22 @@ states that a set of states that are connected and in which the system loops ind
 
 \begin{definition}[Cycle or Loop]
 \label{def:cycle}
-A set of states $\mathbf{C} = \bigcup\limits_{i=1}^{N} \PHst_{i}$ is called a \emph{cycle} of size $N$ if and only if $\forall \PHst \in \mathbb{C}, \PHst \in \Sce(\PHst) $.
+A set of states $\mathbf{C} = \bigcup\limits_{i=1}^{N} \PHst_{i}$ is called a \emph{cycle} of size $N$ if and only if $\forall \PHst \in \mathbf{C}, \PHst \in \Sce(\PHst) $.
 \end{definition}
 
 \Emna{du contenue à propos les cycles}
-Some \emph{scenarios} of a network eventually converges to either a single state, or a cycle of states, called \emph{attractor}. 
+\Maxime{Trouver un autre terme ou une autre formulation à la place de long enough” pour dire : un scénario infini ou qui termine dans un stable state.}
+Every long enough scenario of a network eventually converges to either a single state, or a set of states that cannot be escaped, called \emph{attractor}.
 
 \begin{definition}[Attractor]
 \label{def:attractor}
 A set of $N$ states $\Delta = \bigcup\limits_{i=1}^{N} \PHst_{i}$ is called an \emph{attractor} of size $N$ if and only if $\Delta$ is a cycle and $\forall h \in \PHa $ playable in $\PHst \in \Delta$, $(\PHst \play h) \in \Delta$.
 \end{definition}
 
-If the system evoluate and attend an a state of an attractor, so it wil cycle infinitely into the attractor states.
-We can confuse an attractor of 1-size with a fixed point (i.e steady state). \\
+By definition, if the system evolves and reaches any state of an attractor, it will infinitely cycle into the states of this same attractor.
+We can also confuse an attractor of 1-size with a fixed point (\ie steady state).
 
+\medskip
 The aim of this paper is to focus on the resolution of issues related to the previous definitions:
 we give algorithms enumerating all fixed points (\pref{sec:fixpoint})
 and all attractors (\pref{sec:attractors}). We propose later to tackle the simulation of a PH model in ordor to verify which ones of these attractors are reachable.
