@@ -217,6 +217,7 @@ numberstyle=\tiny\color{darkgray},
 \usepackage{color}
 \newcommand{\Emna}[1]{\textcolor{red}{#1}}
 \newcommand{\EmnaRq}[1]{\textcolor{green}{#1}}
+\newcommand{\Maxime}[1]{\textcolor{violet}{#1}}
 
 %%% Put your definitions there:
 \startlocaldefs
@@ -315,12 +316,12 @@ numberstyle=\tiny\color{darkgray},
 
 \begin{abstract} % abstract
 \parttitle{Background} 
-This paper addresses the problem of finding cycles in asynchronous multi-valued automata networks which are used for the modeling of biological regulatory networks. These networks are models used to study the interactions between different genes in genetic regulatory networks. An attractor is a steady state (singleton) and/or state transition graph cycles (non-singleton). Studying the effect of a disease or a mutation on an organism, leads to recompute every time the attractors in the model. This motivates research on algorithms for finding attractors.
+This paper addresses the problem of finding cycles and attractors in asynchronous multi-valued automata networks which are used for the modeling of biological regulatory networks. These networks are models used to study the interactions between different genes in genetic regulatory networks. An attractor is a terminal component in the state transition graph which can be either a steady state (singleton) or a composition of cycles (non-singleton). Studying the effect of a disease or a mutation on an organism requires to find the attractors in the model to understand the long-lasting behaviors.
+%This motivates research on algorithms for finding attractors.
 \parttitle{Results} 
-We present a computational Answer Set Programming (ASP) based method to identify all attractors in fully asynchronous updating mode and without any network reduction. The algorithm goes through a complete enumeration of the states forming each attractor without the necessity to simulate the whole network or construct the state transition graph. We performed extensive computational experiments on this algorithm, which resulted in good agreement with theoretical results.
+We present a computational Answer Set Programming (ASP) based method to identify all attractors in fully asynchronous updating mode and without any network reduction. The method goes through a complete enumeration of the states forming each attractor without the necessity to simulate the whole network or construct the state transition graph. We performed extensive computational experiments which showed good performance and fitted the expected theoretical results.
 \parttitle{Conclusion} 
 The originality of our approach relies in the exhaustive enumeration of all possible states verifying the attractor properties thanks to the use of ASP. The merits of our methods are illustrated by applying them to biological examples of various sizes and comparing the results with some existing approaches. It turns out that our approach succeeds in processing large models, that is, up to tens of components and interactions.
-Text for this section.
 \end{abstract}
 
 \begin{keyword}
