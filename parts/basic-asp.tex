@@ -8,6 +8,7 @@ where $n \ge m \ge 0$, $a_{0}$ is a propositional atom or $\bot$, all
 $a_{1}, \ldots ,a_{n}$ are propositional atoms, and the symbol ``$not$'' denotes  negation as failure.
 The intuitive reading of such a rule is that whenever $a_{1}, \ldots, a_{m}$
 are known to be true and there is no evidence for any of the negated atoms $a_{m+1}, \ldots, a_{n}$ to be true, then $a_{0}$ has to be true as well.
+\label{constraint}
 If $a_{0} = \bot$, then the rule becomes a constraint (in which case the symbol $\bot$ is usually omitted).
 As $\bot$ can never become true, if the right-hand side of a constraint is validated, it invalidates the whole answer set.
 
