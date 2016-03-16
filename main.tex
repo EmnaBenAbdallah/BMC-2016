@@ -1,0 +1,402 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%          <8 June 2012>              %%
+%%                                     %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.html and the instructions for   %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% additional documentclass options:
+%  [doublespacing]
+%  [linenumbers]   - put the line numbers on margins
+
+%%% loading packages, author definitions
+
+%\documentclass[twocolumn]{bmcart}% uncomment this for twocolumn layout and comment line below
+\documentclass{bmcart}
+
+%%% Load packages
+%\usepackage{amsthm,amsmath}
+%\RequirePackage{natbib}
+%\RequirePackage[authoryear]{natbib}% uncomment this for author-year bibliography
+%\RequirePackage{hyperref}
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+
+% Packages
+\usepackage{latexsym}
+\usepackage{epic,eepic}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{ulem}
+\usepackage{amssymb}
+
+% Tunning
+%------------------
+\usepackage[12pt]{moresize}
+\let\labelindent\relax
+\usepackage{enumitem}
+\algtext*{EndIf}% Remove "end if" text
+\algtext*{EndFor}% Remove "end if" text
+%\setlength{\belowcaptionskip}{10.0pt}
+%\setlength{\abovecaptionskip}{10.0pt}
+%\setlength{\textfloatsep}{10.0pt}
+%\setlength{\floatsep}{10.0pt}
+% TUNNING
+%\setstretch{0.94}
+%\fontsize{3.85mm}{3.85mm}\selectfont
+
+
+\newcommand{\pf}[1]{\langle#1\rangle}
+\newcommand{\noproof}{\hfill $qed$}
+\newcommand{\ignore}[1]{}
+
+\definecolor{gray50}{gray}{0.15}
+\definecolor{verylightgray}{gray}{0.90}
+
+
+\newtheorem{definition}{Definition} % [section]
+\newtheorem{example}{Example} % [section]
+\newtheorem{Lemma}{Lemma} % [section]
+
+\newcommand{\pivot}[1]{\mathbin{\, {#1} \,}}
+\newcommand{\Pivot}[1]{\mathbin{\; {#1} \;}}
+\let\from=\leftarrow
+
+% Pretty ref
+\usepackage{prettyref}
+%\newrefformat{def}{Definition~\ref{#1}}
+%\newrefformat{fig}{Figure~\ref{#1}}
+\newrefformat{tab}{Table~\ref{#1}}
+%%\newrefformat{pro}{Property~\ref{#1}}
+%%\newrefformat{pps}{Proposition~\ref{#1}}
+%\newrefformat{lem}{Lemma~\ref{#1}}
+%\newrefformat{th}{Theorem~\ref{#1}}
+%\newrefformat{sec}{Section~\ref{#1}}
+%%\newrefformat{subsec}{Subsect.~\ref{#1}}
+%%\newrefformat{suppl}{Appendix~\ref{#1}}
+%\newrefformat{ex}{Example~\ref{#1}}
+%%\newrefformat{eq}{Eq.~\eqref{#1}}
+\def\pref{\prettyref}
+
+%Algorithme
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+
+%Package CAV
+\usepackage[english]{babel}
+\usepackage{stmaryrd} % Maths (crochets doubles)
+\usepackage{url}     % Mise en forme + liens pour URLs
+%\usepackage{array}   % Tableaux évolués
+\usepackage{setspace}
+
+% Commande perso
+\newcommand{\ie}{i.e.,\ }
+\newcommand{\eg}{e.g.,\ }
+\newcommand{\resp}{resp.\ }
+\newcommand{\nbld}{\nobreakdash--}
+\newcommand{\refl}[1]{line~\ref{#1}}
+\newcommand{\refll}[2]{lines~\ref{#1}\nobreakdash--\ref{#2}}
+\newcommand{\Refl}[1]{Line~\ref{#1}}
+\newcommand{\Refll}[2]{Lines~\ref{#1}\nobreakdash--\ref{#2}}
+
+
+
+% Citation
+\usepackage{cite}
+
+%marge
+\newenvironment{changemargin}[2]{\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{0pt}%
+\setlength{\rightmargin}{0pt}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{0pt plus 1pt}%
+\addtolength{\leftmargin}{#1}%
+\addtolength{\rightmargin}{#2}%
+}\item }{\end{list}}
+
+% Table
+\usepackage{colortbl}
+\definecolor{gray50}{gray}{0.15}
+\definecolor{verylightgray}{gray}{0.90}
+
+%\newtheorem{definition}{Definition} % [section]
+%\newtheorem{example}{Example} % [section]
+%\newcommand{\pivot}[1]{\mathbin{\, {#1} \,}}
+%\newcommand{\Pivot}[1]{\mathbin{\; {#1} \;}}
+%\let\from=\leftarrow
+
+% **** ASP language ***
+\usepackage{listings}
+\lstdefinelanguage{ASP}{%
+literate={:-}{$\leftarrow$}1,
+morekeywords={not},
+numbers=left,
+escapeinside={\%}{\^^M}
+}
+% Définition des styles de tous les listings du document
+\lstset{
+language=ASP,
+basicstyle=\small\ttfamily,
+columns=fullflexible,
+keywordstyle=\bfseries,
+firstnumber=last,
+keepspaces=true,
+numbersep=2pt,
+numberstyle=\tiny\color{darkgray},
+}
+\renewcommand{\thelstnumber}{\the\value{lstnumber}}
+%% fin définition
+
+% Styles ASP inline
+\newcommand{\ASPnot}{\textbf{not}~}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %%
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %%
+%%  submitted article.                         %%
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\def\includegraphic{}
+\def\includegraphics{}
+
+%%% A ENLEVER pour les modifications en Rouge
+\usepackage{color}
+\newcommand{\Emna}[1]{\textcolor{red}{#1}}
+\newcommand{\EmnaRq}[1]{\textcolor{green}{#1}}
+
+%%% Put your definitions there:
+\startlocaldefs
+\endlocaldefs
+%% ------------------------------------------------------------------------------- %%
+
+% les inputs files
+\input{macros/macros}
+\input{macros/macros-ph}
+\input{macros/tikzstyles2.tex}
+
+%%% Begin ...
+\begin{document}
+
+%%% Start of article front matter
+\begin{frontmatter}
+
+\begin{fmbox}
+\dochead{Research}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{ASP-based method for enumerating attractors in asynchronous multi-valued networks }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% Specify information, if available,       %%
+%% in the form:                             %%
+%%   <key>={<id1>,<id2>}                    %%
+%%   <key>=                                 %%
+%% Comment or delete the keys which are     %%
+%% not used. Repeat \author command as much %%
+%% as required.                             %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author[
+   addressref={univ1},                   % id's of addresses, e.g. {aff1,aff2}
+ %  corref={aff1},                       % id of corresponding address, if any
+ %  noteref={n1},                        % id's of article notes, if any
+   email={emna.ben-abdallah@irccyn.ec-nantes.fr}   % email address
+]{\inits{EB}\fnm{Emna} \snm{Ben Abdallah}}
+\author[
+   addressref={univ2},
+   email={maxime.folschette@unice.fr}
+   ]{\inits{MF}\fnm{Maxime} \snm{Folschette}}
+\author[
+   addressref={univ1},
+   email={olivier.roux@irccyn.ec-nantes.fr}
+]{\inits{OR}\fnm{Olivier} \snm{Roux}}
+\author[
+   addressref={univ1, univ3},
+   email={morgan.magnin@irccyn.ec-nantes.fr}
+]{\inits{MM}\fnm{Morgan} \snm{Magnin}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors' addresses here        %%
+%%                                          %%
+%% Repeat \address commands as much as      %%
+%% required.                                %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\address[id=univ1]{%                           % unique id
+  \orgname{LUNAM Universit\'e, \'Ecole Centrale de Nantes, IRCCyN UMR CNRS 659
+(Institut de Recherche en Communications et Cybern\'etique de Nantes)}, % university, etc
+  \street{1 rue de la No\"e},                     %
+  \postcode{44321}                                % post or zip code
+  \city{Nantes},                              % city
+  \cny{France}                                    % country
+}
+\address[id=univ2]{%
+  \orgname{I3S, UMR 7271 --- Universit\'e de Nice-Sophia Antipolis},
+ % \street{D\"{u}sternbrooker Weg 20},
+ % \postcode{24105}
+  \city{Nice},
+  \cny{France}
+}
+\address[id=univ3]{%                           % unique id
+  \orgname{National Institute of Informatics}, % university, etc
+  \street{2-1-2, Hitotsubashi, Chiyoda-ku},                     %
+  \postcode{101-8430}                                % post or zip code
+  \city{Tokyo},                              % city
+  \cny{Japan}                                    % country
+}
+
+
+\begin{abstractbox}
+
+\begin{abstract} % abstract
+\parttitle{Background} 
+This paper addresses the problem of finding cycles in asynchronous multi-valued automata networks which are used for the modeling of biological regulatory networks. These networks are models used to study the interactions between different genes in genetic regulatory networks. An attractor is a steady state (singleton) and/or state transition graph cycles (non-singleton). Studying the effect of a disease or a mutation on an organism, leads to recompute every time the attractors in the model. This motivates research on algorithms for finding attractors.
+\parttitle{Results} 
+We present a computational Answer Set Programming (ASP) based method to identify all attractors in fully asynchronous updating mode and without any network reduction. The algorithm goes through a complete enumeration of the states forming each attractor without the necessity to simulate the whole network or construct the state transition graph. We performed extensive computational experiments on this algorithm, which resulted in good agreement with theoretical results.
+\parttitle{Conclusion} 
+The originality of our approach relies in the exhaustive enumeration of all possible states verifying the attractor properties thanks to the use of ASP. The merits of our methods are illustrated by applying them to biological examples of various sizes and comparing the results with some existing approaches. It turns out that our approach succeeds in processing large models, that is, up to tens of components and interactions.
+Text for this section.
+\end{abstract}
+
+\begin{keyword}
+\kwd{Biological Regulatory Network}
+\kwd{multiple-valued networks}
+\kwd{attractor}
+\kwd{steady state}
+\kwd{cycle}
+\kwd{Answer Set Programming}
+\end{keyword}
+
+
+\end{abstractbox}
+%
+\end{fmbox}% uncomment this for twcolumn layout
+
+\end{frontmatter}
+
+
+
+\section{Introduction}
+\input{parts/intro.tex}
+
+\section{Preliminary definitions}
+\label{sec:defs}
+\subsection{Process Hitting}
+\input{parts/PH}
+
+\section{Answer Set Programming}
+\input{parts/basic-asp}
+
+\section{Fixed point enumeration}
+\label{sec:fixpoint}
+\input{parts/fixPoint}
+
+\section{Attractors }
+\label{sec:attractors}
+\input{parts/attractors}
+
+% Pas sure de laisser cette partie on peut la mettre dans un autre article + une étude approffondie (bifurcation ou autre...)
+%\section{Reachability of attractors }
+%\label{sec:reach-attractor}
+%\input{parts/reach-attractors}
+
+\section{Results }
+\label{sec:results}
+\input{parts/results}
+
+\section{Conclusion and future directions}
+\label{sec:ccl}
+\input{parts/cc}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  The Bibliography                       %%
+%%                                                         %%
+%%  Bmc_mathpys.bst  will be used to                       %%
+%%  create a .BBL file for submission.                     %%
+%%  After submission of the .TEX file,                     %%
+%%  you will be prompted to submit your .BBL file.         %%
+%%                                                         %%
+%%                                                         %%
+%%  Note that the displayed Bibliography will not          %%
+%%  necessarily be rendered by Latex exactly as specified  %%
+%%  in the online Instructions for Authors.                %%
+%%                                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% if your bibliography is in bibtex format, use those commands:
+\bibliographystyle{bmc-mathphys} % Style BST file (bmc-mathphys, vancouver, spbasic).
+\bibliography{biblio}      % Bibliography file (usually '*.bib' )
+% for author-year bibliography (bmc-mathphys or spbasic)
+% a) write to bib file (bmc-mathphys only)
+% @settings{label, options="nameyear"}
+% b) uncomment next line
+%\nocite{label}
+
+
+\end{document}

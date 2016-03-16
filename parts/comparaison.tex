@@ -1,0 +1,281 @@
+In this section, we show the effectiveness of our approach on some examples,
+and compare it to other existing approaches.
+All computations were performed on a Pentium~V, 3.2~GHz with 4~GB RAM.
+
+\subsection{Evaluation}
+To assess the efficiency of our new approach,
+we position ourselves with respect to existing methods dealing with different biological models.
+We have chosen the following tools, that are detailed below: 
+\textsc{GINsim}\footnote{\textsc{GINsim} version 2.4 alpha: \url{http://ginsim.org/}} (Gene Interaction Network Simulation)~\cite{gonzalez2006ginsim,naldi2009logical,naldi2007decision};
+\textsc{LibDDD}\footnote{\textsc{LibDDD} version 1.8: \url{http://move.lip6.fr/software/DDD/}}
+(Library of Data Decision Diagrams)~\cite{thierry2009hierarchical,colange2013towards};
+\textsc{Pint}\footnote{\textsc{Pint} version 2015-11-14: \url{http://loicpauleve.name/pint/}}~\cite{PMR12-MSCS};
+and a method for CTL model-checking proposed by Rocca \textit{et al.} in~\cite{roccaasp}
+which was also developed in ASP.
+%but for states transitions networks.
+Each method uses a specific kind of representation\footnote{When available, we used the converters included into \textsc{Pint} for these translations.}:
+Thomas models (a particular kind of logical regulatory networks) for \textsc{GINsim}
+and the method of Rocca \textit{et al.},
+instantiable transition systems for \textsc{LibDDD},
+%state transition networks for the method of Rocca \textit{et al.}
+and Process Hitting (PH) for \textsc{Pint} as well as for our method.
+
+For this comparative study, we focus on biological network of different sizes:
+a tadpole tail resorption (TTR) model with 12 biological components~\cite{khalis2009smbionet},
+an ERBB receptor-regulated G1/S transition (ERBB) model with 20 components~\cite{Samaga2009}
+and a T-cell receptor (TCR) signaling network of 40 components~\cite{Klamt06}.
+These models were chosen to be of different sizes:
+from small (12 components) to large (40 components).
+We note however that the considered PH models may contain more sorts than
+the original number of biological components, due to the use of "cooperative sorts", which allow to model Boolean gates but do not necessarily
+have a biological meaning.
+The different model representations that are required to perform these benchmarks have been obtained by translations
+from the PH
+ensuring the conservation of the dynamical properties.
+
+The specification of the models and the results of our enumeration of the fixed points
+are summed up in \pref{tab:models}.
+The time performance is roughly the same than the SAT implementation
+that comes with \textsc{Pint}.
+The results for several methods regarding reachability properties
+are summarized in \pref{tab:reachability}.
+The methods and the results provided by each of them are detailed in the following.
+The overall results show that our method is efficient in computing reachability
+from a given initial state;
+furthermore, it sometimes provides more information than the other existing ones.
+
+%\begin{table*}[ht]
+%\begin{center}
+%\noindent%
+%\begin{tabular}{|l|c||c|c|c||>{\columncolor{verylightgray}}c|>{\columncolor{verylightgray}}c|}
+%\hline
+%  \multicolumn{2}{|c||}{Models} & \multicolumn{3}{c||}{PH representation} & \multicolumn{2}{c|}{Fixed points enumeration} \\
+%\hline
+%  Name & Components & Sorts & Processes & States & computation time & Nbr of results \\
+%\hline
+%\hline
+%  TTR  & 8  & 12 & 42  & $2^{19}$ & 0.004s & 0 \\
+%\hline
+%  ERBB & 20 & 42 & 152 & $2^{70}$ & 0.017s & 3 \\
+%\hline
+%  TCR  & 40 & 54 & 156 & $2^{73}$ & 0.021s & 1 \\
+%\hline
+%\end{tabular}
+%\vspace*{4pt}
+%\caption{\label{tab:models}%
+%Description of the models used in our tests and results of our fixed point enumeration.
+%Each model is referred to by its short name, where
+%TTR stands for the tadpole tail resorption model~\cite{khalis2009smbionet},
+%ERBB for the receptor-regulated G1/S transition of the same name~\cite{Samaga2009}
+%and TCR for the T-cell receptor signaling network~\cite{Klamt06}.
+%For each of them, this table gives the number of biological components
+%in the original representation,
+%and the number of sorts, the number of processes
+%and the number of states in the PH model.
+%Finally, the last column gives the computation time for the enumeration of all fixed points
+%and the number of results returned.
+%}
+%\end{center}
+%\end{table*}
+
+%\begin{table*}[ht]
+%\begin{center}
+%\noindent%
+%\begin{tabular}{|l|l|c||c|c|c|>{\columncolor{verylightgray}}c|}
+%\hline
+%  \multicolumn{3}{|c||}{Experiments} & \multicolumn{4}{c|}{Results} \\
+%\hline
+%  & Model & Target  & \textsc{Pint} & \textsc{LibDDD} & \textsc{GINsim} & \textsc{ASP-PH} \\
+%\hline
+%\hline
+%  \#1 & TTR & full state & 0m0.97s & 0m1.15s &  0m2.05s & 0m1.90s \\
+%\hline
+%  \#2 & ERBB & full state & out &1m55.38s & 2m31.64s & 0m11.84s \\
+%\hline
+%  \#3 & ERBB & partial state  & 0m0.03s &1m54.96s & -- & 0m5.02s \\
+%\hline
+%  \#4 & TCR & full state & Inconc & out & out & 6m27.93s \\
+%\hline
+%  \#5 & TCR & partial state & 0m0.02s & out & -- & 1m35.08s \\
+%\hline
+%\end{tabular}
+%\vspace*{4pt}
+%\caption{\label{tab:reachability}
+%Compared performances of several methods to compute reachability analyses:
+%The method of \textsc{Pint}, \textsc{LibDDD}, \textsc{GINsim} and our new method presented in this paper, called \textsc{ASP-PH}.
+%For each test, this table gives the short name of the considered model,
+%as given in table~\ref{tab:models},
+%the type of goal (either a whole state or a sub-state)
+%and the computation time of the different methods used for the tests,
+%where ``out'' marks an execution taking too much time or memory,
+%``\mbox{--}'' indicates that is not possible to do the test,
+%and ``Inconc'' states that the method terminates without a response.
+%}
+%\end{center}
+%\end{table*}
+
+% Tableau qualitatif
+% Bound
+% Loop detection
+% Search:
+
+\begin{itemize}[leftmargin=*]
+
+\item \textbf{\textsc{GINsim}} is a software for the edition, simulation and analysis
+of gene interaction networks.
+It allows to compute all reachable fixed points from a given initial state instantly;
+however, it is not possible to compute all fixed points independently from the initial state.
+Regarding the reachability problem, \textsc{GINsim} only allows to check the reachability of
+full states, because its approach consists in computing
+(part of) the state-transition graph and then searching for a path between the two given states.
+Therefore, it was not possible to perform reachability checks on partial states
+(experiments \#3 \& \#5).
+Small state-transition graphs can also be displayed by this tool.
+
+\item \textbf{\textsc{LibDDD}}
+is a library for symbolic model-checking of CTL \& LTL properties.
+It can thus especially be used to check reachability properties;
+however, as opposed to our method, it does not output an execution path
+solving this reachability.
+In addition, it relies on the construction of the state-transition graph
+which is then stored under the form of a binary decision diagram for a more efficient analysis.
+This computation explains why \textsc{LibDDD} takes more time to respond,
+and gets out of memory in about 12 minutes for the biggest example
+which contains $2^{73}$ states
+(experiments \#4 \& \#5).
+Finally, \textsc{LibDDD} is not able to compute the fixed points of a network.
+
+\item \textbf{\textsc{Pint}}
+is a library gathering tools and converters related to the PH.
+It should be noted that \textsc{Pint} contains the only reachability analysis
+developed so far natively for the Process Hitting,
+before the method proposed in this paper.
+It consists in an approximation that avoids to compute the state-transition graph;
+it is thus ensured to be really efficient, which explains the fastest results,
+but at the cost of possibly terminating without being conclusive.
+However, it is not designed for goals consisting of many processes,
+which are more likely to trigger an inconclusive response
+(such as for experiment \#4),
+or an exponential research in sub-solutions
+(such as for experiment \#2).
+This explains the high computation times for some of the tests.
+Moreover, in the case of a positive answer,
+it currently does not return the execution of the path achieving the desired reachability,
+but only outputs its conclusion (True, False or Inconclusive).
+
+\item \textbf{\textsc{ASP-Thomas}}\footnote{The authors wish to thank Laurent Trilling for his patience and his help in performing the tests.}
+offers the possibility to model-check CTL properties on Thomas networks.
+Currently, the translation of Thomas networks into ASP, including discrete parameters, is hand-made.
+Then, for a given CTL formula also described in ASP, this tool returns the set of paths satisfying the formula.
+In the following, we only focus on reachability, that is, formulas of the form: $s_0 \Rightarrow \mathsf{EF}(g)$
+where $s_0$ is the initial state and $g$ a goal property.
+It has to be noted that this method requires to provide a total number $n$ of steps
+for which the dynamics will be computed.
+Indeed, all dynamics of the system are computed up to $n$ steps in order to perform a depth first verification;
+thus, this value $n$ has to be bigger than the size of the minimal path and lower than the size of the maximal path,
+and thus may be difficult to predict.
+This is not the case for the iterative version of our method which can stop as soon as the goal is met,
+and thus potentially before such a $n$\textsuperscript{th} step.
+%, the program will stop at the first step that reach the goals: breath first search.
+%It is clear from \pref{tab:reachability} that
+%With a well-chosen number of steps, \textsc{ASP-Thomas} terminates very quickly when compared with others.
+The main consequence on the \textsc{ASP-Thomas} tool
+is that if one can a priori know the length of the path to reach the specified goal,
+this approach can provide very good performance.
+This shows that ASP can be a good choice to run the dynamics of a model and check reachability properties.
+However, if the bound is totally unknown, choosing a too small path length can naturally lead to miss the goal,
+and a too large one will greatly impact the performance or lead to miss the goal as well (if no path of length $n$ exist).
+For example, in experiment \#3, the goal is reachable within 18 steps:
+using a bound of 21, \textsc{ASP-Thomas} finishes in 2.61s;
+however, with a bound of 30 steps, it takes several minutes.
+We can observe similar results on the others benchmarks.
+In a nutshell, with our approach, if the goal is reachable, the run time only depends on the distance to reach the goal,
+while with \textsc{ASP-Thomas}, the run time only depends of the chosen bound,
+because all paths of the chosen length will be generated before being checked.
+A summary of differences between our approach and \textsc{ASP-Thomas} is detailed in \pref{tab:qualitative_differences}.
+% This shows that ASP is a good choice to run the dynamics of a model and check reachability properties.
+% The a summary of differences between our approach and \textsc{ASP-Thomas} is detailed in \pref{tab:qualitative_differences}.
+% The main difference is that, in \textsc{ASP-Thomas}, the search is bounded.
+% % If the number of steps to reach the goal is part of the goal or if one can a priori know the length of the path to reach the specified goal,
+% % this approach can provide very good performance.
+% But if the bound is totally unknown, choosing a too small path length can naturally lead to miss the goal.
+% %and thus to conclude it is unreachable when it is reachable.
+% On the other hand, choosing a bound that is too big will greatly impact the performance.
+% For example, in experiment \#3, the goal is reachable with a path of 18 steps,
+% and using a bound of 21, \textsc{ASP-Thomas} finishes in 2.61s.
+% However, if we fix the bound to 30 steps, it takes several minutes.
+% We can observe similar results on the others benchmarks.
+% With our approach, if the goal is reachable, the run time only depends on the distance to reach the goal.
+% In \textsc{ASP-Thomas}, the run time only depends of the chosen bound, because all paths of the chosen length will be generated before being checked.
+\end{itemize}
+
+%\begin{table}[ht]
+%\begin{center}
+%\noindent%
+%\begin{tabular}{|l|c|>{\columncolor{verylightgray}}c|}
+%\hline
+%  & \textsc{ASP-Thomas} & \textsc{ASP-PH} \\
+%\hline
+%\hline
+% Input Model & Thomas network & Process hitting \\
+%% \hline
+%%  Input generation & Hand-made & {\bf Automatic} \\ %with PH-to-ASP \\
+%\hline
+% Input property & CTL formula & $\mathsf{EF}$ only \\
+% %$s_0 \rightarrow \mathsf{EF}(g)$ \\
+%\hline
+% Output & All paths & Minimal paths \\
+%\hline
+% Reachability & Bounded & {\bf Unbounded} \\
+%\hline
+% Non-reachability & Bounded & Bounded \\
+%\hline
+% Search & Depth first & Breadth first \\
+%\hline
+% Run time (small $n$) & {\bf Seconds} & Seconds/minutes \\
+%\hline
+% Run time (big $n$) & Out/UNSAT & {\bf Seconds/minutes} \\
+%\hline
+%\end{tabular}
+%\vspace*{4pt}
+%\caption{\label{tab:qualitative_differences}
+%Qualitative comparison between the iterative version of our approach and \textsc{ASP-Thomas}.
+%}
+%\end{center}
+%\end{table}
+
+
+
+\subsection{Discussion}
+\label{sec:discussion}
+
+In the previous sections,
+we developed two new methods in ASP to check dynamical properties,
+namely identifying fixed points and finding all the shortest paths to reach a given goal.
+Compared to some other methods described above
+(\textsc{GINsim} and \textsc{LibDDD}) our method is relatively faster and also permits to study larger networks
+(up to $2^{73}$ states in our tests). We exclusively studied networks modeled in Process Hitting. This new formalism for network modeling is a restriction of synchronous automata and thus allows to represent any kind of dynamical model. Moreover, the dynamics of PH it is easy to implement into ASP.
+
+In practice, we can detect the loops in the model dynamics and avoid to check the same path again, as shown in \pref{sec:loops}.
+However, the iterative version of \textsc{Clingo} can iterate forever even if no answer is satisfied and there is no more path to explore.
+Thus, although it is expected to return an \texttt{unsatisfiable} response, the solver remains stuck for infinity in a state instead.
+To our knowledge, there is no possibility yet to force the incrementation to stop in the iterative version without reaching the goals.
+It is still possible, however, to limit the number of iterations to an arbitrary
+maximum which will be eventually reached in such case.
+This is possible with the use of a construct limiting the maximum number of steps: ``\texttt{\#const imax = n.}'',
+where \texttt{n} is the maximum number of steps.
+
+Several values can be given to this parameter \texttt{n}.
+For example, the total number of states is an obvious maximum,
+as it will never be exceeded by a minimum path,
+but it is too hight to be very interesting.
+The total number of sorts is a more interesting value,
+under the hypothesis that each one will change its active process at most once,
+which is often the case for Boolean networks;
+or, with a similar reasoning, the total number of processes can be chosen.
+
+Given our implementation, if the step \texttt{n} is reached (meaning no valid path was found),
+the computation stops with an \texttt{unsatisfiable} response for the reachability.
+But, if the goal is reached at some intermediary step, it is not necessary to continue the iteration up to ``\texttt{n}''.
+Instead, the computation is stopped and the current trace of the reachability is returned.
+In comparison, \textsc{ASP-Thomas} has to compute all possible dynamic evolutions of length ``\texttt{n}'' before verifying the property.

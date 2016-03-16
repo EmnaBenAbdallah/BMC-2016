@@ -1,0 +1,19 @@
+This paper is motivated by ..... \Emna{A completer}
+
+Our goal in this paper is to develop exhaustive methods to analyze Biological Regulatory Networks modeled in Process Hitting. With respect to PH dynamics, this analysis consists in three kinds of results:
+\begin{itemize}
+\item[-] Finding all possible steady states of a BRN,
+\item[-] Computing all cycles with fixed size $N$ ($N \in \mathsf{N}+$ ),
+\item[-] Enumarating all attractors of size $N$ ($N \in \mathsf{N}+$ ).
+\end{itemize}
+ The particularity of our contribution relies in the use of Answer Set Programming
+(ASP) \cite{baral2003knowledge}
+to compute the results.
+This declarative programming framework has proved efficient
+to tackle models with a large number of components and parameters.
+Our aim here is to assess its potential w.r.t. the computation
+of some dynamical properties of PH models.
+We chose the PH framework because it allows to represent a wide range of dynamical multi-valued models, 
+and the particular form of its actions
+can be easily represented using ASP,
+with exactly one fact per action.
