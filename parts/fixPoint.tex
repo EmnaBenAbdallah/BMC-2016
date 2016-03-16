@@ -1,12 +1,14 @@
+\Maxime{Changer peut-être un peu cette entrée en matière pour varier par rapport à la version précédente.}
+
 The study of basins of attraction provides an important understanding of the different behaviors of a Biological Regulatory Network (BRN)~\cite{wuensche1998genomic}.
 Indeed, a system will always eventually end in a basin of attraction,
 and this may depend on biological switches or other complex phenomena.
 Here we focus on fixed points (also called stable states or steady states),
-which are basins of attraction composed of only one state. \\
+which are basins of attraction composed of only one state.
 
 \subsection{Process Hitting translation in ASP}
 Before any analysis of the network,
-we first need to translate it into ASP\footnote{All programs, including this translation and the methods described in the following, are available online at: \url{https://github.com/EmnaBenAbdallah/verification-of-dynamical-properties_PH}}.
+we first need to translate it into ASP\benchmarksfootnote.
 To do this we use the self-describing predicates
 \texttt{sort}, \texttt{process} and \texttt{action} to define the sorts, processes and actions of the network, respectively.
 \pref{ex:asp-ph} shows how a PH network is defined with these predicates.
@@ -21,8 +23,8 @@ sort(X) :- process(X,_). %\label{ASPsort}
 action("d",1,"d",1,0). action("d",0,"a",0,1). %\label{actions1}
 action("a",1,"c",1,"b",0,1). action("a",1,"b",1,"e",0,1). %\label{actions2}
 \end{lstlisting}
-In \refll{ASPprocess1}{ASPprocess2} we create the list of processes corresponding to each sort.
-For example the sort \texttt{"a"} has 2 processes numbered \texttt{0} and \texttt{1};
+In \refll{ASPprocess1}{ASPprocess2} we create the list of processes corresponding to each sort;
+for example, the sort \texttt{"a"} has 2 processes numbered \texttt{0} and \texttt{1} and
 predicate ``\texttt{process("a", 0..1).}'' will in fact expand into the two following predicates:
 \begin{lstlisting}[numbers=none]
 process("a", 0). process("a", 1).
@@ -32,19 +34,27 @@ In ASP, a word starting with a capital letter is a variable,
 and the underscore (``\texttt{\_}'') is a placeholder for any value.
 Finally, all the actions of the network are defined straightforwardly in \refll{actions1}{actions2};
 for instance, the predicate ``\texttt{action("d",0,"a",0,1).}'' represents the action
-$\PHfrappe{d_0}{a_0}{a_1}$ and we use the same predicate to define a plural action: ``\texttt{action("a",1,"c",1,"b",0,1)}" to represent the action $\PHfrappe{a_1 \wedge c_1}{b_0}{b_1}$ means that when $a_1$ and $c_1$ are simultanory active, they can cooperate to change the level of $b$ from $0$ to $1$.
+$\PHfrappe{d_0}{a_0}{a_1}$ and we use the same predicate to define an action with several hitters, for instance: ``\texttt{action("a",1,"c",1,"b",0,1)}" to represent the action $\PHfrappe{a_1 \wedge c_1}{b_0}{b_1}$ meaning that when $a_1$ and $c_1$ are simultaneously active, they can cooperate to change the level of $b$ from $0$ to $1$.
 \end{example}
 
 \subsection{Search of fixed points}
 % du blabla sur les points fxes
+
+\Maxime{Faire référence à l'algo 1 et expliquer :
+\begin{itemize}
+  \item Qu'on l'ajoute pour les gens plus à l'aise avec l'impératif,
+  \item Qu'il permet d'avoir une idée de la complexité du problème étudié,
+  \item Mais qu'on ne le donne pas à ASP.
+\end{itemize}
+}
 
 \begin{algorithm}[h]
 	\caption{Enumarate fixed points from an Automata Network}
 	\label{alg:PH-fixpont}
 	\begin{itemize}
 		\item[] \textbf{INPUT}: Automata Network $PH=(\PHs,\PHl,\PHa)$
-		\item[] \textbf{OUTPUT}: All the fixed points /* steady states or 1-size attractors
-		\item[] \textbf{Initialize}: $\Delta \longleftarrow \varnothing$ /*  set of fixed points
+		\item[] \textbf{OUTPUT}: All the fixed points // steady states or 1-size attractors
+		\item[] \textbf{Initialize}: $\Delta \longleftarrow \varnothing$ //  set of fixed points
 		\item[] \textbf{Begin} \\
 		
 			\hspace{0.2cm}	\textbf{\textit{forall}} $\PHst_i \in \PHl$ \textbf{\textit{do}} 
@@ -62,17 +72,22 @@ $\PHfrappe{d_0}{a_0}{a_1}$ and we use the same predicate to define a plural acti
 \end{algorithm}
 
 The enumeration of fixed points requires to translate the definition of a steady state (given in \pref{def:fixpoint})
-into logic rules for ASP program. Thus, first we browse all processes of this graph in order to generate all possible states,
+into logic rules for ASP program. Thus, we first browse all processes of this graph in order to generate all possible states,
 that is, all possible combinations of processes by choosing only one process from each sort (\refl{selectprocesses}).
 \begin{lstlisting}
 1 {selectProc(A,I) : process(A,I)} 1 :- sort(A). %\label{selectprocesses}
 \end{lstlisting}
-The previous lines form a \emph{cardinality rule} that creates as many potential answer sets as the number of possible states
+This line forms a \emph{cardinality rule} that creates as many potential answer sets as the number of possible states
 to take into account.
-The next step consists in filtering out any state that is not a \emph{fixed point},
-or, in other words, eliminating all candidate answer sets in which an action could be played. For this, we use a constraint:
-any solution that satisfies the body of this constraint will be removed from the answer set.
-Regarding our problem, a state is eliminated if there exists an action between two selected processes (\refll{constraintFix}{constraintFix2}). The first constraint \refl{constraintFix} treats the action with only one hitter and the second \refl{constraintFix2} the actions with $2$ hitters. We developed so a program that takes into account the maximum indegree of the model and generate constraints as much as necessary.
+Cardinality rules are very useful to enumerate candidate answer sets,
+and they allow to tune how many atom of each kind is included in every set.
+In this particular case, we stated that a state (\texttt{selectProc})
+is created by considering exactly one \texttt{process} for each \texttt{sort}.
+
+The next step consists in filtering out any state that is not a fixed point,
+that is, in this case, eliminating all candidate answer sets in which an action could be played. For this, we use a constraint:
+any solution that satisfies the body of this constraint will be removed from the answer set (because the atom $\bot$ cannot be true in an answer set, as explained in Page \pageref{constraint}).
+Regarding our problem, a state is eliminated if there exists a playable action in the considered state (\refll{constraintFix}{constraintFix2}). The first constraint (\refl{constraintFix}) treats the action with only one hitter and the second (\refl{constraintFix2}) the actions with $2$ hitters. For this, we developed a program that takes into account the maximum number of hitters of any action in the model and generates as many constraints as necessary.
 \begin{lstlisting}
 :- action(A,I,B,J,_), selectProc(A,I), selectProc(B,J), A!=B. %\label{constraintFix}
 :- action(A1,I1,A2,I2,B,J,_), selectProc(A1,I1),selectProc(A2,I2), 
@@ -85,25 +100,30 @@ described by the atoms \texttt{selectProc(A,I)}.
 The PH model of \pref{fig:ph} contains $5$ sorts:
 $a$, $b$, $c$ and $d$ have $2$ processes and $b$ has 3; therefore, the whole model has $2*2*2*3*3 = 72$ states (whether they can be reached or not from a given initial state).
 We can check that this model contains exactly $5$ fixed points: $\PHstate{a_1, b_0, c_0, d_0, e_1}$, $\PHstate{a_1, b_2, c_0, d_0, e_1}$, $\PHstate{a_1, b_1, c_0, d_0, e_1}$, $\PHstate{a_1, b_0, c_0, d_0, e_0}$, $\PHstate{a_1, b_2, c_0, d_0, e_0}$.
-Indeed, there is no action between each two processes contained in this state so no execution is possible from these. In this example, no other state verifies this property.
+Indeed, there is no playable action in these states so no execution is possible from these. In this example, no other state verifies this property.
 
 If we execute the ASP program detailed above (\refll{selectprocesses}{constraintFix2}),
 alongside with the description of the PH model given in \pref{ex:asp-ph} (\refll{ASPprocess1}{actions2}),
 we obtain $8$ answer sets that match the expected result:
-\begin{changemargin}{-2cm}{-1cm}
+%\begin{changemargin}{-2cm}{-1cm}
 %\scriptsize{ 
 \begin{lstlisting}[numbers=none]
 Answer: 1
-selectProc("a",1) selectProc("b",0) selectProc("c",0) selectProc("d",0) selectProc("e",1)
+selectProc("a",1) selectProc("b",0) selectProc("c",0)
+selectProc("d",0) selectProc("e",1)
 Answer: 2
-selectProc("a",1) selectProc("b",2) selectProc("c",0) selectProc("d",0) selectProc("e",1)
+selectProc("a",1) selectProc("b",2) selectProc("c",0)
+selectProc("d",0) selectProc("e",1)
 Answer: 3
-selectProc("a",1) selectProc("b",1) selectProc("c",0) selectProc("d",0) selectProc("e",1)
+selectProc("a",1) selectProc("b",1) selectProc("c",0)
+selectProc("d",0) selectProc("e",1)
 Answer: 4
-selectProc("a",1) selectProc("b",0) selectProc("c",0) selectProc("d",0) selectProc("e",0)
+selectProc("a",1) selectProc("b",0) selectProc("c",0)
+selectProc("d",0) selectProc("e",0)
 Answer: 5
-selectProc("a",1) selectProc("b",2) selectProc("c",0) selectProc("d",0) selectProc("e",0)
+selectProc("a",1) selectProc("b",2) selectProc("c",0)
+selectProc("d",0) selectProc("e",0)
 \end{lstlisting}
 %}
-\end{changemargin}
+%\end{changemargin}
 \end{example}
