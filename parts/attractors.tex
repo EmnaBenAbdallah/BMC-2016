@@ -165,12 +165,12 @@ playableInCycle(action(A,I,B,J,K),S) :- candidatePlayable(action(A,I,B,J,K),S), 
 existActionOut :- candidatePlayable(Action,S), not playableInCycle(Action,S). %\label{existActOut1}
 \end{lstlisting}
 
-At this step the question is how to be sure if this attractor of size $N$ is not a set of attractors of size lowest than $N$. The idea is (like descriped in the algorithm \ref{alg:PH-attractor} and lines \ref{loopX}-\ref{constraintloopX}) to do not consider the repeated loops as an attractor. We compute in the predicate \texttt{loopX(S1, S2, X)} if there is as well a loop between the $X^{th}$ successor of \texttt{S1} and the $X^{th}$ successor of \texttt{S2}. It means propably  that a same loop is repeated. In \texttt{notloopX(S1, S2)} we compute if there is at least one $X^{th}$ successor of \texttt{S1} does not have a loop with the $X^{th}$ successor of \texttt{S2}. Finally with the constraint in line \ref{constraintloopX}, we eliminate the case of having the repeated loops.
+At this step, we want to ensure that the considered attractor is of size $N$, and not of a size which is a divisor of $N$. The idea, as described in Algorithm \ref{alg:PH-attractor} and \refll{loopX}{constraintloopX}, is to filter the repeated loops out of the result. For this, we define the predicate \texttt{loopX(S1,S2,X)} which becomes true if there is a loop between the \texttt{X}\textsuperscript{th} successor of \texttt{S1} and the \texttt{X}\textsuperscript{th} successor of \texttt{S2} in the considered succession of states. This predicate is a clue that the same loop may have been traversed twice. In \texttt{notloopX(S1,S2)} we state that there exists at least one \texttt{X}\textsuperscript{th} successor of \texttt{S1} that does not loop back to the \texttt{X}\textsuperscript{th} successor of \texttt{S2}. Finally with the constraint in \refl{constraintloopX}, we eliminate the case of having the repeated loops.
 
 \begin{lstlisting}
 loopX(S1,S2,X) :- loop(S1+X, S2+X), 0<=X, X<=S2-S1, state(S1;S2;X). %\label{loopX}
 notloopX(S1,S2) :- not loopX(S1,S2,X), 0<=X, X<=S2-S1, state(S1;S2;X). %\label{notloopX}
- 	:- loop(S1,S2), loop(S1, S2+(S2-S1)), not notloopX(S1,S2). %\label{constraintloopX}
+:- loop(S1,S2), loop(S1, S2+(S2-S1)), not notloopX(S1,S2). %\label{constraintloopX}
 \end{lstlisting}
 
 The problem of finding attractors in a multi-valued automata network is NP-hard. However, we have good results when the algorithm \ref{alg:PH-attractor} is developed with ASP \Maxime{Je ne suis pas d'accord : on ne traduit pas cet algorithme en ASP ! On écrit autre chose qui doit nous donner un résultat équivalent, mais ce n'est pas un algorithme impératif}. Indeed, we show in Section \ref{sec:results}, by performing a number of computational experiments on biological networks, that the program can tackle even large systems and return a result in few seconds.
