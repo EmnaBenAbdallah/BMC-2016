@@ -1,5 +1,8 @@
-This paper is motivated by ..... \Emna{A completer}
+ \Emna{A completer avec les bonne références}
 \Maxime{Ajouter quelques généralités sur les BRN}
+
+In recent decades, rapidly evolving new technologies providing a platform for exploring the massive amount of biological data (genomic, proteomics...). In parallel, we observe the dramatic development in systems biology. From the perspective of understanding the nature of a cellular function, it is essential to study the behavior of its components (genes, DNAs, proteins...) with a global view rather than an individual view, owing to the fact that activities and expressions of callular component are not isolated but dependent on each other. Various models have been proposed for modeling gene regulatory networks. In particular, Boolean Network (BN) proposed by Kauffman \Emna{refs} and its extension Probabilistic Boolean Network (PBN) developed by have received substantial attentions, owing to its capacity to capture the switching behavior of genetic processes. 
+Various kinds of mathematical models have been proposed for modeling gene regulatory networks. These models include neural networks, differential equations, Petri nets, Boolean networks, proposed by Kauffman, probabilistic Boolean networks (PBNs), multi-valued models such Automata Network. Among these models, Automata Network (AN) proposed by \Emna{ref}, has been well studied in \Emna{refs}. AN is a simple model in which each component has two or more levels of expression and the dynamic of the networks as well as the influences between the components are modeled with \emph{actions} (more details in section \ref{sec:defs}).
 
 Our goal in this paper is to develop exhaustive methods to analyze a Biological Regulatory Network (BRN) modeled in Process Hitting (PH). With respect to PH dynamics, this analysis leads to three kinds of results:
 \begin{itemize}
@@ -14,7 +17,6 @@ This declarative programming framework has proved efficient
 to tackle models with a large number of components and parameters.
 Our aim here is to assess its potential w.r.t. the computation
 of some dynamical properties of PH models.
-We chose the PH framework because it allows to represent a wide range of dynamical multi-valued models, 
-and the particular form of its actions
+We chose the PH framework because it allows to represent a wide range of dynamical multi-valued models, and the particular form of its actions
 can be easily represented using ASP,
 with exactly one fact per action.
