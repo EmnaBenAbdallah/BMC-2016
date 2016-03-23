@@ -1,33 +1,39 @@
- \Emna{A completer avec les bonne références}
+\Emna{A completer avec les bonne références}
 \Maxime{Ajouter quelques généralités sur les BRN}
 
-In recent decades, rapidly evolving new technologies providing a platform for exploring the massive amount of biological data (genomic, proteomics...). In parallel, we observe the dramatic development in systems biology. From the perspective of understanding the nature of a cellular function, it is essential to study the behavior of its components (genes, DNAs, proteins...) with a global view rather than an individual view, owing to the fact that activities and expressions of callular component are not isolated but dependent on each other. Various models have been proposed for modeling gene regulatory networks. In particular, Boolean Network (BN) proposed by Kauffman \Emna{refs} and its extension Probabilistic Boolean Network (PBN) developed by have received substantial attentions, owing to its capacity to capture the switching behavior of genetic processes. 
-Various kinds of mathematical models have been proposed for modeling gene regulatory networks. These models include neural networks, differential equations, Petri nets, Boolean networks, proposed by Kauffman, probabilistic Boolean networks (PBNs), multi-valued models such Automata Network. Among these models, Automata Network (AN) proposed by \Emna{ref}, has been well studied in \Emna{refs}. AN is a simple model in which each component has two or more levels of expression and the dynamic of the networks as well as the influences between the components are modeled with \emph{actions} (more details in section \ref{sec:defs}).
+\Maxime{Je ne suis pas d'accord sur la notion de “cyclic attractor”: je crois que tu confonds “trap domain” (un ensemble d'états dont on ne peut pas s'échapper ; un attracteur est un trap domain minimal) et “cyclic attractor” (qui est un attracteur, donc minimal, composé d'un seul cycle).}
+
+In recent decades, rapidly evolving new technologies have been producing a massive amount of biological data (genomics, proteomics...). This lead to dramatic developments in systems biology which could sustain on this data. Indeed, from the perspective of understanding the nature of a cellular function, it is essential to study the behavior of its components (genes, DNAs, proteins...) with a global view rather than an individual one, and take into account the fact that activities and expressions of cellular components are not isolated but dependent on each other.
+
+In this focus, the long-term behavior of regulatory networks dynamics is of particular interest. Indeed, we know that \Emna{ref?} for any initial condition, the system will eventually evolve into a final situation which can be either a \emph{stable state} (also called a fixed point) or an \emph{attractor} (a minimal set of states that cannot be escaped). Another interesting and intermediate notion is the \emph{basin of attraction} which is a non-minimal attractor: the system may reduce the current basin of attraction it currently lies into until it reaches an attractor.
+Attractors in a BRN have been interpreted as distinct cell types in multicellular organisms. \Maxime{Ref ? Peut-être détailler un peu plus pour insister sur l'intérêt des attracteurs ?}
+
+Various kinds of mathematical models have been proposed for the modeling of Biological Regulatory Networks (BRNs). These models include neural networks, differential equations, Petri nets, Boolean networks (as proposed by Kauffman \Emna{ref}), probabilistic Boolean networks, and other multi-valued models such Synchronous Automata Networks. In this paper, we focus on Process Hitting \Maxime{ref}, an asynchronous formalism which is a restriction of Automata Networks, and that especially encompasses the framework of René Thomas \Emna{ref}. Indeed, qualitative frameworks have received substantial attention, because of their capacity to capture the switching behavior of genetic or biological processes, and therefore their long-term behavior. This is why we use a qualitative representation here to tackle the search of stable states and attractors.
 
 %%%%%%%%%
-The long-term behaviour of Biological Regulatory Networks (BRNs) dynamics is of particular interest. For any initial condition, the system will eventually evolve into a \emph{stable states} (i.e fixed points) or a set of stable states called \emph{attractor}. The set of states that can lead the system to a specific attractor is called the \emph{basin of attraction} (i.e \emph{cyclic attractor}). 
 
-A \emph{cyclic attractor} as minimal subsets of the state set from which the dynamics does not escape. Attractors in a BRNs have been interpreted as distinct cell types in multicellular organisms. The computational problem of finding all attractors in a ANd is difficult. Even the simpler problem of deciding whether the system has a fixed point (the smallest possible attractor) is NP-hard.
-Based on the former, many studies have proven that the computational way of attractors in BRNs is a NP-hard problem. 
+The computational problem of finding all attractors in a BRN is difficult. Even the simpler problem of deciding whether the system has a fixed point (which can be seen as the smallest possible kind of attractor) is NP-hard.
+Based on the former \Maxime{Il manque une ref ?}, many studies have proven that the computational way of attractors in BRNs is a NP-hard problem. \Maxime{ref ?}
 
-Therefore, it is meaningful to identify attractors. Of course, these can be done by examining all possible states of a network. However, it would be too time consuming even for small $n$, and not multi-valued network (a boolean network) since $2^n$ states have to be examined. Indeed, if we want to find any \emph{attractor} (\emph{fixed point } or \emph{bassin of attraction}), we may find it by following the trajectory to the attractor starting from a randomly selected state.
+Therefore, it is meaningful to identify attractors. Of course, these can be done by examining all possible states of a network with an exhaustive approach. For instance, finding an attractor or a stable state can be performed by randomly selecting an initial state and following a long enough trajectory.
+However, listing all attractors with this method can be too time consuming even for small networks: $2^n$ initial states have to be considered for a Boolean networks of size $n$; and multi-valued networks raise this complexity even more. Furthermore, enough computation have to be performed to ensure that all trajectories have been explored and all attractors were found.
 %%%%%%%
 
 \Emna{Les travaux qui ont été faits concernant la recherche des attracteurs}
 
-Our goal in this paper is to develop exhaustive methods to analyze a Biological Regulatory Network (BRN) modeled in Process Hitting (PH). With respect to PH dynamics, this analysis leads to three kinds of results:
+Our goal in this paper is to develop exhaustive methods to analyze a Biological Regulatory Network (BRN) modeled in Process Hitting (PH). With respect to PH dynamics, we exhibit three kinds of results:
 \begin{itemize}
 \item[-] Finding all possible steady states of a BRN,
-\item[-] Computing all cycles with fixed size $N$ ($N \in \mathsf{N}+$ ),
-\item[-] Enumarating all attractors of size $N$ ($N \in \mathsf{N}+$ ).
+\item[-] Computing all cycles with fixed size $N \in \mathbb{N}$,
+\item[-] Enumerating all attractors of size $N \in \mathbb{N}$.
 \end{itemize}
- The particularity of our contribution relies in the use of Answer Set Programming
+The particularity of our contribution relies in the use of Answer Set Programming
 (ASP) \cite{baral2003knowledge}
 to compute the results.
 This declarative programming framework has proved efficient
 to tackle models with a large number of components and parameters.
-Our aim here is to assess its potential w.r.t. the computation
+Our aim here is to assess its potential w.r.t.\ the computation
 of some dynamical properties of PH models.
-We chose the PH framework because it allows to represent a wide range of dynamical multi-valued models, and the particular form of its actions
+We chose the PH framework because it allows to represent a wide range of dynamical multi-valued models in the asynchronous framework, and the particular form of its actions
 can be easily represented using ASP,
 with exactly one fact per action.
