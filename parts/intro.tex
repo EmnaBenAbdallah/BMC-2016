@@ -4,6 +4,17 @@
 In recent decades, rapidly evolving new technologies providing a platform for exploring the massive amount of biological data (genomic, proteomics...). In parallel, we observe the dramatic development in systems biology. From the perspective of understanding the nature of a cellular function, it is essential to study the behavior of its components (genes, DNAs, proteins...) with a global view rather than an individual view, owing to the fact that activities and expressions of callular component are not isolated but dependent on each other. Various models have been proposed for modeling gene regulatory networks. In particular, Boolean Network (BN) proposed by Kauffman \Emna{refs} and its extension Probabilistic Boolean Network (PBN) developed by have received substantial attentions, owing to its capacity to capture the switching behavior of genetic processes. 
 Various kinds of mathematical models have been proposed for modeling gene regulatory networks. These models include neural networks, differential equations, Petri nets, Boolean networks, proposed by Kauffman, probabilistic Boolean networks (PBNs), multi-valued models such Automata Network. Among these models, Automata Network (AN) proposed by \Emna{ref}, has been well studied in \Emna{refs}. AN is a simple model in which each component has two or more levels of expression and the dynamic of the networks as well as the influences between the components are modeled with \emph{actions} (more details in section \ref{sec:defs}).
 
+%%%%%%%%%
+The long-term behaviour of Biological Regulatory Networks (BRNs) dynamics is of particular interest. For any initial condition, the system will eventually evolve into a \emph{stable states} (i.e fixed points) or a set of stable states called \emph{attractor}. The set of states that can lead the system to a specific attractor is called the \emph{basin of attraction} (i.e \emph{cyclic attractor}). 
+
+A \emph{cyclic attractor} as minimal subsets of the state set from which the dynamics does not escape. Attractors in a BRNs have been interpreted as distinct cell types in multicellular organisms. The computational problem of finding all attractors in a ANd is difficult. Even the simpler problem of deciding whether the system has a fixed point (the smallest possible attractor) is NP-hard.
+Based on the former, many studies have proven that the computational way of attractors in BRNs is a NP-hard problem. 
+
+Therefore, it is meaningful to identify attractors. Of course, these can be done by examining all possible states of a network. However, it would be too time consuming even for small $n$, and not multi-valued network (a boolean network) since $2^n$ states have to be examined. Indeed, if we want to find any \emph{attractor} (\emph{fixed point } or \emph{bassin of attraction}), we may find it by following the trajectory to the attractor starting from a randomly selected state.
+%%%%%%%
+
+\Emna{Les travaux qui ont été faite concernant la recherche des attracteurs}
+
 Our goal in this paper is to develop exhaustive methods to analyze a Biological Regulatory Network (BRN) modeled in Process Hitting (PH). With respect to PH dynamics, this analysis leads to three kinds of results:
 \begin{itemize}
 \item[-] Finding all possible steady states of a BRN,
