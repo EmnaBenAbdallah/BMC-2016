@@ -99,7 +99,9 @@ We note that because PH encompasses Thomas modeling, all our results are also ap
 In \pref{def:playableAction} we formalize the dynamics of a PH which is based on the actions in an asynchronous fashion.
 An action can be played in a given state if all of its hitters and its target are active in this state; playing this action then means replacing the target process by the bounce process.
 Thus, the set of playable actions in a given PH state gives the set of transitions starting from this state in the state-transition graph.
-Furthermore, the playability of an action only depends on the current state.
+As a consequence, the playability of an action only depends on the current state;
+furthermore, the dynamic evolutions of the model are purely non-deterministic
+because several branchings can be potentially chosen between at any step.
 
 \begin{definition}[Playable action \& Successor]
 \label{def:playableAction}

@@ -1,33 +1,41 @@
-\subsection{Intuitive idea}
-The computational method for finding attractors of size $N$ in an automata network falls into three stages:
+%\subsection{Intuitive idea}
+
+In the previous section we showed a method to enumerate all fixed points.
+In the following, we focus on the more complex kind of minimal trap domains: attractors.
+We describe here how to obtain the set of all attractors of a fixed size;
+obtaining all attractors can be tackled by gradually increasing this size.
+
+The computational method to enumerate all attractors of size $N$ in a PH model falls into three stages:
 \begin{enumerate}
   \item Enumerating all sub-State Transition Graphs (sub-STGs)
     with $N$ transitions,
   \item Filtering out all of these sub-STG that are not cyclic,
-  \item Checking, for each state of the remaining cycles
-    if all the next states are part of this cycle.
+  \item Checking, for each state of the remaining cycles,
+    if all the successor states are also part of this cycle.
 \end{enumerate}
 Once all steps are passed, the only remaining sub-STGs are attractors of size $N$,
 because they consist of cycles that cannot be escaped.
 
-% Description de l'algo
-\Maxime{Idem : expliquer les raisons de mettre l'algo.}
-The pseudocode of the presented algorithm is given as Algorithm \ref{alg:PH-attractor}. We use ASP for the identification of all sub-STG with $N$ transitions in a multiple-valued network. \Maxime{C'est quoi un “multiple-valued network” ? “Multi-valued” ? Mais pourquoi le préciser ici, pourquoi ne pas juste dire “PH” ?} First, we generate a set of loops of size $N$. Then, a set satisfying the attractors formula corresponds to a valid solution. This process can be repeated iteratively for larger and larger values of $N$ until all attractors are identified.
+\Maxime{Décrire brièvement l'algo ?}
+Once again, for the sake of clarity,
+the pseudocode for the imperative equivalent of our method is given as Algorithm \ref{alg:PH-attractor}.
+However, our method (including all three steps mentioned above) has been implemented in a purely ASP fashion.
+Finally, we note that this approach allows 
 
 %Faire un algo
-\begin{algorithm}[!h]
-	\caption{Enumarate Attractors of size $N$ from an Automata Network}
+\begin{algorithm}[p]
+	\caption{Enumeration of the attractors of size $N$ of a PH}
 	\label{alg:PH-attractor}
 	\begin{itemize}
-		\item[] \textbf{INPUT}: Automata Network $PH=(\PHs,\PHl,\PHa)$, Attractor size $N$ // $N \geq 2$
-		\item[] \textbf{OUTPUT}: All the attractors of size $N$
-		\item[] \textbf{Initialize}: $\Delta_N \longleftarrow \varnothing$ // The set of the attractors of size $N$
-		\item[] \textbf{Begin} \\
+		\item[] \textbf{INPUT:} A network $PH=(\PHs,\PHl,\PHa)$, an integer $N$ \quad // $N \geq 2$
+		\item[] \textbf{OUTPUT:} All the attractors of size $N$
+		\item[] \textbf{Initialize:} $\Delta_N \longleftarrow \varnothing$ \quad // Will be the set of the attractors of size $N$
+		\item[] \textbf{Begin:} \\
 		
 			\hspace{0.2cm}	\textbf{\textit{forall}} $\PHst_i \in \PHl$ \textbf{\textit{do}} 
 				
 				\begin{itemize}
-					\item[] compute the $N$ successors: $\PHst_i \rightarrowtail ... \rightarrowtail \PHst_N$ \\ let $\Delta_N^i=$\{$\PHst_j \in \PHl, i \leq j \leq N$\} %be the set of these states
+					\item[] Compute the $N$ successors: $\PHst_i \rightarrowtail ... \rightarrowtail \PHst_N$ \\ Let $\Delta_N^i=$\{$\PHst_j \in \PHl, i \leq j \leq N$\} %be the set of these states
 					
 					\item[] \textbf{\textit{if}} $\PHst_i = \PHst_N$ \textbf{\textit{then}} \\
 						\hspace{0.7cm}  $loop(\Delta_N^i) \longleftarrow True$ \\
@@ -71,7 +79,7 @@ The pseudocode of the presented algorithm is given as Algorithm \ref{alg:PH-attr
 					\textbf{\textit{end if}} \\
 
 					\item[] \textbf{\textit{if}} $attractor(\Delta_N^i) = True$ \textbf{\textit{then}}\\
-					\hspace{0.5cm}  $\Delta_N \longleftarrow \Delta_N \cup \Delta_N^i$ \\
+					\hspace{0.5cm}  $\Delta_N \longleftarrow \Delta_N \cup \{ \Delta_N^i \}$ \\
 					\textbf{\textit{end if}} 
 
 				\end{itemize}		
@@ -82,66 +90,72 @@ The pseudocode of the presented algorithm is given as Algorithm \ref{alg:PH-attr
 
 % Mettre du code ASP + explication
 \subsection{Cycles enumeration}
-The presented algorithm searches for all sub-graphs with a given number $N$ of transitions %(i.e path of length $N$)
-in the network. As we start each time from a different initial state to simulate the evolution of the model, it means that in the end we browse all the model and generate all possible states (\refl{selectprocesses}). 
+The approach that we present here first searches for all sub-graphs with a given number $N$ of transitions %(i.e path of length $N$)
+in the network.
+For this, we once again start from every possible initial state in the model (\refl{selectprocesses}). 
 
-The evolution of a model is done in a limited number of steps $N$. At the beginning of an ASP program we can define constants whose values will be choosen by the user every time he execute it. Here we use \texttt{n} as a constant that defines the number of states we want to have.
-We therefore define the predicate \texttt{state(0..n)}.
-For example, \texttt{state(0..5)} will compute the 6 successive states, including the initial state.
+The evolution of a model is then computed within a limited number $N$ of steps. In an ASP program, it is possible to instantiate constants whose values will be defined by the user at each execution. Here, we use \texttt{n} as a constant that represents the number of states we want to consider
+inside the predicate \texttt{state(0..n)}.
+For example, \texttt{state(0..5)} will compute every 6 first successive states, including the initial state.
 
-The dynamics of a network is described by its actions; therefore, identifying the future states requires to first identify the playable actions for each state. We remind that an action is playable in a state when all its hitter processes and target process are active in this state (see Definition \ref{def:playableAction}). Therefore, we define an ASP predicate $\texttt{playable(action(A}_\texttt{1}\texttt{,I}_\texttt{1}\texttt{,...,A}_\texttt{n}\texttt{,I}_\texttt{n}\texttt{, B,J,K),S)}$ which is true when the processes  ${\texttt{A}_\texttt{1}}_{\texttt{I}_\texttt{1}}\texttt{,...,}{\texttt{A}_\texttt{n}}_{\texttt{I}_\texttt{n}}$ and $\texttt{B}_\texttt{J}$ are active at state \texttt{S}.
+Because the dynamics of a PH is solely described by its actions, identifying the future states requires to first identify the playable actions for each state.
+We recall that an action is playable in a state when all its hitter processes and target process are active in this state (see \pref{def:playableAction}).
+% Therefore, we define an ASP predicate $\texttt{playable(action(A}_\texttt{1}\texttt{,I}_\texttt{1}\texttt{,...,A}_\texttt{k}\texttt{,I}_\texttt{k}\texttt{,B,J,K),S)}$ which is true when the processes  ${\texttt{A}_\texttt{1}}_{\texttt{I}_\texttt{1}}\texttt{,...,}{\texttt{A}_\texttt{k}}_{\texttt{I}_\texttt{k}}$ and $\texttt{B}_\texttt{J}$ are active at state \texttt{S}.
+Therefore, we define an ASP predicate $\texttt{playable(action(A1,I1,...,Ak,Ik,B,J,K),S)}$ which is true when the processes $\texttt{A1}_{\texttt{I1}}$, ..., $\texttt{Ak}_{\texttt{Ik}}$ and $\texttt{BJ}$ are active in state \texttt{S}.
 
-The cardinality rule of \refl{e2a}
-creates a set of as many predicates as there are possible simulations from the chosen state,
-thus reproducing all possible branchings in the possible simulations of the model, in the form of as many potential answer sets. It is also needed to enforce the strictly \emph{asynchronous} dynamic
-which forces that exactly one process can change between two states and keeping the non-deterministic property.
-To remove all scenarios where two or more actions have been played between
-two states, we use the constraint of \refl{e2b}.
+Then, all the possible evolutions of the model can be enumerated by a cardinality rule such as the one of \refl{e2a}:
+this line creates a set of as many predicates as there are possible simulations from the considered initial state,
+thus reproducing all possible branchings in the dynamics of the model, in the form of as many new potential answer sets.
+It is also needed to enforce the strictly asynchronous dynamic
+which forces that exactly one process can change between two states (thus maintaining the non-determinism).
+We use the constraint of \refl{e2b} to remove all scenarios where two or more actions have been played simultaneously between two states.
 Thus, the remaining scenarios contained in the answer sets all strictly follow
-the asynchronous dynamics of the Automata Networs.
-We finally witness that the active expression level of sort \texttt{B} has changed between states \texttt{S} and \texttt{S+1} with the predicate \texttt{change(B,S+1)} of \refll{e3a}{e3b}. We create as much as necessary rules to find the changed sort that is the result of an action having one or more hitters (here we detailed action with 1 and 2 hitters).
+the asynchronous dynamics defined in \pref{sec:defs}.
+We witness that the active process of a given sort \texttt{B} has changed between two consecutive states \texttt{S} and \texttt{S+1} with the predicate \texttt{change(B,S+1)} of \refll{e3a}{e3b}
+depending on the chosen action to be played.
+For this, it is once again necessary to duplicate this rule depending on the maximal number of hitters in all actions in the model,
+as we did for the rules of \refll{constraintFix}{constraintFix2}.
+Finally, all active processes of the new state of step \texttt{S+1}
+are gathered into a predicate \texttt{instate}.
+This predicate endorses the fact that one process has evolved (\refl{e4})
+while all the processes from all the other sorts
+remain identical in their condition of the previous state (\refll{e5}{e5a}).
 
 \begin{lstlisting}
 1{play(Action,S)}1 :- playable(Action,S), state(S). %\label{e2a} 
 :- 2{play(Action,S)}, state(S). %\label{e2b}
 change(B,S+1) :- play(action(_,_,B,_,_),T), state(S). %\label{e3a}
 change(B,S+1) :- play(action(_,_,_,_,B,_,_),T), state(S). %\label{e3b}
-\end{lstlisting}
-
-Finally, the active processes at state \texttt{S+1},
-thus representing the next state in the dynamics, depending on the chosen bounce,
-can be computed by the rules of \refll{e4}{e5a}.
-\begin{lstlisting}
 instate(activeProc(B,K),S+1) :-  play(action(_,_,B,_,K),S), state(S).%\label{e4}
 instate(activeProc(B,K),S+1) :-  instate(activeProc(B,K),S),%\label{e5}
-				  not change(B,S+1), state(S).%\label{e5a}
+          not change(B,S+1), state(S).%\label{e5a}
 \end{lstlisting}
-In other words, the state of state \texttt{S+1} contains one updated active process $\texttt{B}_\texttt{K}$
-resulting from the predicate \texttt{play(action(\_,\_,B,\_,K),T)} (\refl{e4})
-as well as all the unchanged processes that correspond to the other sorts (\refll{e5}{e5a}).
 
 The overall result of the pieces of program presented in this subsection
-is an answer set containing one answer for each
-possible simulation in \texttt{n} time steps,
-starting from each state.
+(\refl{selectprocesses} and \refll{e2a}{e5a})
+is a collection of answer sets,
+with one answer for each possible simulation in $N$ time steps,
+starting from any initial state.
 As a result, it reproduces all sub-STG of size $N$.
 %%%%%%%%%%%
 
-Once a sub-STG is found, we check whether it is a cycle (i.e a loop) or not. 
-To do so, we use the predicate \texttt{getNbrRepetition(X,S1,S2)} which permits to get the number \texttt{X} of identical active processes between two tates \texttt{S1} et \texttt{S2}. This predicate refers to another predicate, \texttt{repeter(P,S1,S2)} (\refll{repeter1}{repeter2}), that is true for each process which is active at both \texttt{S1} and \texttt{S2}. 
+Once a sub-STG is found, it remains to check whether it is a cycle (\ie a loop) or not.
+To do so, we need a predicate \texttt{repeter(P,S1,S2)} (\refll{repeter1}{repeter2}) which is true for each process active in both \texttt{S1} and \texttt{S2}.
+Predicate \texttt{getNbrRepetition(X,S1,S2)} (\refll{getRep1}{getRep2}) then computes the number \texttt{X} of identical active processes between two states \texttt{S1} and \texttt{S2}.
+At this point, determining if there is a loop between \texttt{S1} and \texttt{S2}
+only requires to compare the value \texttt{X} to the total number of sorts in the model:
+if both are equal, it means that \texttt{S1} and \texttt{S2} are identical states.
+In our case, we only need to compare the first (\texttt{S1=0}) and last (\texttt{S2=n}) states of each sub-STG.
+We finally eliminate all sub-STG that are not cycles with the constraint of \refl{loop}.
 \begin{lstlisting}
 repeter(P,S1,S2) :- selectProcSt(P,S1), selectProcSt(P,S2), %\label{repeter1}
 state(S1), state(S2). %\label{repeter2}
 getNbrRepetition(X,S1,S2) :- X={repeter(F,S1,S2)}, S1!=S2, %\label{getRep1}
 state(S1), state(S2). %\label{getRep2}
-\end{lstlisting}
-Then computing the number of repeated processes between \texttt{S1} and \texttt{S2} in \refll{getRep1}{getRep2} will permit to us to compare this number with the total number of sorts, which is the maximum number of repetition, and determine if there is a loop between the two states. In our case we just need to compare the first state (\texttt{S1=0}) and the last state (\texttt{S2=n}) of the sub-STG. Therefore we eliminate all sub-STG that are not cycles by the constraint (\refl{loop}).
-\Maxime{Cette partie mériterait d'être un peu mieux expliquée.}
-\begin{lstlisting}
-:- loop(0, n)  %\label{loop}
+:- not loop(0, n).  %\label{loop}
 \end{lstlisting}
 
-\subsection{Attractors enumation}
+\subsection{Attractors enumeration}
 \Maxime{Tout le début de cette section n'est pas très clair et mériterait aussi d'être clarifié et reformulé.}
 Since each state of the STG of an automata network has various next states (due to the non-deterministic dynamics), a cyclic sub-STG is not necessarily an attractor. Thus, we first need to determine the presence of a cycle by checking whether the first state and the last state of the sub-STG are the same. Then we check if this sub-STG is an attractor. 
 Filtering the remaining sub-STGs means using a constraint in ASP. Indeed a constraint has many advanges for such NP-Hard problems. Indeed, it permits to decrease the computational time. But to benifit of this specific type of logic rules, we have to think oppositly and present the opposite of what we are looking for. 
