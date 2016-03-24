@@ -10,7 +10,7 @@ The intuitive reading of such a rule is that whenever $a_{1}, \ldots, a_{m}$
 are known to be true and there is no evidence for any of the negated atoms $a_{m+1}, \ldots, a_{n}$ to be true, then $a_{0}$ has to be true as well.
 \label{constraint}
 If $a_{0} = \bot$, then the rule becomes a constraint (in which case the symbol $\bot$ is usually omitted).
-As $\bot$ can never become true, if the right-hand side of a constraint is validated, it invalidates the whole answer set.
+As $\bot$ can never become true, if the right-hand side of a constraint is validated, it invalidates the whole solution.
 
 In the ASP paradigm, the search of solutions consists in computing the \emph{answer sets} of a given program.
 An answer set for a program is defined by Gelfond and Lifschitz \cite{DBLP:conf/iclp/GelfondL88} as follows.
@@ -26,4 +26,5 @@ Programs can yield no answer set, one answer set, or several answer sets.
 To compute the answer sets of a given program, one needs a grounder (to remove variables from the rules) and a solver.
 For the present work, we used \textsc{Clingo}\footnote{We used \textsc{Clingo} version 4.5.0: \url{http://potassco.sourceforge.net/}}~\cite{gebser2010incremental} which is a combination of both.
 
-In section \pref{sec:defs} we detailed the dynamic properties (fixed points, cycles and attractors). How to verify them with the help of ASP is the subject of the rest of this paper.
+\medskip
+In the rest of this paper, we use ASP to tackle the problems of enumerating all fixed points and attractors of a given PH model.

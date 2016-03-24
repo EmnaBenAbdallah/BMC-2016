@@ -5,10 +5,16 @@
 
 In recent decades, rapidly evolving new technologies have been producing a massive amount of biological data (genomics, proteomics...). This lead to dramatic developments in systems biology which could sustain on this data. Indeed, from the perspective of understanding the nature of a cellular function, it is essential to study the behavior of its components (genes, DNAs, proteins...) with a global view rather than an individual one, and take into account the fact that activities and expressions of cellular components are not isolated but dependent on each other.
 
-In this focus, the long-term behavior of regulatory networks dynamics is of particular interest. Indeed, we know that \Emna{ref?} for any initial condition, the system will eventually evolve into a final situation which can be either a \emph{stable state} (also called a fixed point) or an \emph{attractor} (a minimal set of states that cannot be escaped). Another interesting and intermediate notion is the \emph{basin of attraction} which is a non-minimal attractor: the system may reduce the current basin of attraction it currently lies into until it reaches an attractor.
-Attractors in a BRN have been interpreted as distinct cell types in multicellular organisms. \Maxime{Ref ? Peut-être détailler un peu plus pour insister sur l'intérêt des attracteurs ?}
+In this focus, the long-term behavior of regulatory networks dynamics is of particular interest~\cite{wuensche1998genomic}.
+Indeed, at any moment, a system lies into a certain \emph{basin of attraction}, which is an area of its dynamics that cannot be escaped.
+When evolving, the system eventually falls into a new and smaller basin of attraction, thus reducing its of possible future behaviors as previous ones become unreachable.
+This phenomenon may depend on biological switches or other complex phenomena
+and it explains why, for any initial condition and on the long run, any system will eventually evolve into a final situation in which the number of possible behaviors is the most restricted. \Emna{ref?}
+The system has then reached a minimal basin of attraction.
+Such constructs have been interpreted as distinct responses of the organism, such as distinct cell types in multicellular organisms. \Maxime{Ref ? Peut-être détailler un peu plus pour insister sur l'intérêt des attracteurs ?}
 
-Various kinds of mathematical models have been proposed for the modeling of Biological Regulatory Networks (BRNs). These models include neural networks, differential equations, Petri nets, Boolean networks (as proposed by Kauffman \Emna{ref}), probabilistic Boolean networks, and other multi-valued models such Synchronous Automata Networks. In this paper, we focus on Process Hitting \Maxime{ref}, an asynchronous formalism which is a restriction of Automata Networks, and that especially encompasses the framework of René Thomas \Emna{ref}. Indeed, qualitative frameworks have received substantial attention, because of their capacity to capture the switching behavior of genetic or biological processes, and therefore their long-term behavior. This is why we use a qualitative representation here to tackle the search of stable states and attractors.
+Various kinds of mathematical models have been proposed for the modeling of Biological Regulatory Networks (BRNs). These models include neural networks, differential equations, Petri nets, Boolean networks (as proposed by Kauffman \Emna{ref}), probabilistic Boolean networks, and other multi-valued models such Synchronous Automata Networks. In this paper, we focus on Process Hitting \Maxime{ref}, an asynchronous formalism which is a restriction of Automata Networks, and that especially encompasses the framework of René Thomas \Emna{ref}. Indeed, qualitative frameworks have received substantial attention, because of their capacity to capture the switching behavior of genetic or biological processes, and therefore their long-term behavior. This is why we use a qualitative representation for the study of basins of attraction.
+More particularly, in a qualitative framework, a minimal basin of attraction can take two different forms: it can be either a \emph{stable state} (a state from which the system doesn't evolve anymore, also called a fixed point) or an \emph{attractor} (a minimal set of states that loops indefinitely and cannot be escaped).
 
 %%%%%%%%%
 
@@ -37,3 +43,11 @@ of some dynamical properties of PH models.
 We chose the PH framework because it allows to represent a wide range of dynamical multi-valued models in the asynchronous framework, and the particular form of its actions
 can be easily represented using ASP,
 with exactly one fact per action.
+
+This paper is organized as follows.
+\pref{sec:defs} presents the main definitions related to the Process Hitting and the particular constructs that we will seek: fixed points and attractors,
+and \pref{sec:asp} briefly present the Answer Set Programming.
+\pref{sec:fixpoint} details our method that allows to translate a PG into ASP and find all the fixed points in such a model
+and \pref{sec:attractors} explains how to enumerate all cycles in a model and use this result to find all the attractors.
+\pref{sec:results} sums up the results obtained with our methods on several models of different sizes.
+Finally, \pref{sec:ccl} concludes and gives some perspectives to this work.
