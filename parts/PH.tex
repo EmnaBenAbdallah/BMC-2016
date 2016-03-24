@@ -19,7 +19,8 @@ $\PHfrappe{b_j}{b_j}{b_k}$.
 
 The PH is therefore a restriction of Synchronous Automata Networks where each transition
 changes the local state of exactly one automaton,
-therefore being an asynchronous restriction.
+therefore restricted to an asynchronous framework,
+as explained below.
 This restriction on the actions was originally more strict and chosen to permit
 the development of efficient static analysis methods
 based on abstract interpretation~\cite{PMR12-MSCS}.
@@ -98,6 +99,7 @@ We note that because PH encompasses Thomas modeling, all our results are also ap
 In \pref{def:playableAction} we formalize the dynamics of a PH which is based on the actions in an asynchronous fashion.
 An action can be played in a given state if all of its hitters and its target are active in this state; playing this action then means replacing the target process by the bounce process.
 Thus, the set of playable actions in a given PH state gives the set of transitions starting from this state in the state-transition graph.
+Furthermore, the playability of an action only depends on the current state.
 
 \begin{definition}[Playable action \& Successor]
 \label{def:playableAction}

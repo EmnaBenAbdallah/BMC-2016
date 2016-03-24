@@ -1,18 +1,17 @@
-\Maxime{Changer peut-être un peu cette entrée en matière pour varier par rapport à la version précédente.}
 
 The first aspect of our present work is the enumeration of a special kind of basins of attraction: fixed points (also called stable states or steady states) which are composed of only one state.
 They can be studied separately from attractors because their enumeration follows a different pattern which is more specific to this problem.
 
-\subsection{Process Hitting translation in ASP}
+\subsection{Translating a Process Hitting model into Answer Set Programming}
 Before any analysis of the network,
-we first need to translate it into ASP \benchmarksfootnote.
-To do this we use the self-describing predicates
+we first need to translate it into ASP\benchmarksfootnote.
+To do this, we use the self-describing predicates
 \texttt{sort}, \texttt{process} and \texttt{action} to define the sorts, processes and actions of the network, respectively.
 \pref{ex:asp-ph} shows how a PH network is defined with these predicates.
 
 \begin{example}[Representation of a PH model in ASP]
 \label{ex:asp-ph}
-The representation of the PH model of \pref{fig:ph} in ASP as the following:
+The representation of the PH model of \pref{fig:ph} in ASP is the following:
 \begin{lstlisting}
 process("a", 0..1). process("b", 0..2). process("c", 0..1). %\label{ASPprocess1}
 process("d", 0..1).  process("e", 0..2). %\label{ASPprocess2}
@@ -23,6 +22,7 @@ action("a",1,"c",1,"b",0,1). action("a",1,"b",1,"e",0,1). %\label{actions2}
 In \refll{ASPprocess1}{ASPprocess2} we create the list of processes corresponding to each sort;
 for example, the sort \texttt{"a"} has 2 processes numbered \texttt{0} and \texttt{1} and
 predicate ``\texttt{process("a", 0..1).}'' will in fact expand into the two following predicates:
+\addtocounter{lstnumber}{-1}
 \begin{lstlisting}[numbers=none]
 process("a", 0). process("a", 1).
 \end{lstlisting}
@@ -37,73 +37,48 @@ $\PHfrappe{d_0}{a_0}{a_1}$ and we use the same predicate to define an action wit
 \subsection{Search of fixed points}
 % du blabla sur les points fxes
 
-\Maxime{Faire référence à l'algo 1 et expliquer :
-\begin{itemize}
-  \item Qu'on l'ajoute pour les gens plus à l'aise avec l'impératif,
-  \item Qu'il permet d'avoir une idée de la complexité du problème étudié,
-  \item Mais qu'on ne le donne pas à ASP.
-\end{itemize}
-}
-
-\begin{algorithm}[h]
-	\caption{Enumarate fixed points from an Automata Network}
-	\label{alg:PH-fixpont}
-	\begin{itemize}
-		\item[] \textbf{INPUT}: Automata Network $PH=(\PHs,\PHl,\PHa)$
-		\item[] \textbf{OUTPUT}: All the fixed points // steady states or 1-size attractors
-		\item[] \textbf{Initialize}: $\Delta \longleftarrow \varnothing$ //  set of fixed points
-		\item[] \textbf{Begin} \\
-		
-			\hspace{0.2cm}	\textbf{\textit{forall}} $\PHst_i \in \PHl$ \textbf{\textit{do}} 
-				
-				\begin{itemize}
-					\item[] compute all playable actions $A_{\PHst_i}$ in $\PHst_i$
-					
-					\item[] \textbf{\textit{if}} $A_{\PHst_i} = \varnothing$ \textbf{\textit{then}} \\
-						\hspace{0.5cm}  $\Delta \longleftarrow \Delta \cup \{\PHst_i\}$ \\
-					 \textbf{\textit{end if}} 
-				\end{itemize}		
-			\hspace{0.2cm} \textbf{\textit{end forall}} \\		
-			\hspace{0.2cm} \textbf{\textit{return}} $\Delta$		
-	\end{itemize}
-\end{algorithm}
-
-The enumeration of fixed points requires to translate the definition of a steady state (given in \pref{def:fixpoint})
-into logic rules for ASP program. Thus, we first browse all processes of this graph in order to generate all possible states,
-that is, all possible combinations of processes by choosing only one process from each sort (\refl{selectprocesses}).
+The enumeration of fixed points requires to translate the definition of a fixed point (given in \pref{def:fixpoint})
+into logic rules for an ASP program. For this, the first step is to browse all possible states of the network,
+that is, all possible combinations of processes by choosing exactly one process from each sort, which is done in \refl{selectprocesses}.
 \begin{lstlisting}
 1 {selectProc(A,I) : process(A,I)} 1 :- sort(A). %\label{selectprocesses}
 \end{lstlisting}
-This line forms a \emph{cardinality rule} that creates as many potential answer sets as the number of possible states
+This line constitutes a \emph{cardinality rule} which creates as many potential answer sets as the number of possible states
 to take into account.
 Cardinality rules are very useful to enumerate candidate answer sets,
 and they allow to tune how many atom of each kind is included in every set.
 In this particular case, we stated that a state (\texttt{selectProc})
-is created by considering exactly one \texttt{process} for each \texttt{sort}.
+is created by considering exactly one \texttt{process} for each existing \texttt{sort}.
 
-The next step consists in filtering out any state that is not a fixed point,
-that is, in this case, eliminating all candidate answer sets in which an action could be played. For this, we use a constraint:
-any solution that satisfies the body of this constraint will be removed from the answer set (because the atom $\bot$ cannot be true in an answer set, as explained in Page \pageref{constraint}).
-Regarding our problem, a state is eliminated if there exists a playable action in the considered state (\refll{constraintFix}{constraintFix2}). The first constraint (\refl{constraintFix}) treats the action with only one hitter and the second (\refl{constraintFix2}) the actions with $2$ hitters. For this, we developed a program that takes into account the maximum number of hitters of any action in the model and generates as many constraints as necessary.
+The next step consists in filtering out any state, among all those generated,
+that is not a fixed point.
+In this case, it consists in eliminating all candidate answer sets
+in which at least one action can be played.
+For this, we use a constraint:
+any solution that satisfies the body of this constraint will be removed from the answer set (because the atom $\bot$ cannot be true in an answer set, as explained in Page~\pageref{constraint}).
+Regarding our problem, a state is eliminated if there exists a playable action in the considered state (\refll{constraintFix}{constraintFix2}). The first constraint (\refl{constraintFix}) treats the case of an action with only one hitter and the second (\refl{constraintFix2}) the actions with two hitters.
+To generalize this, we developed a script that takes into account the maximum number of hitters of any action in the model and generates as many constraints as necessary.
 \begin{lstlisting}
 :- action(A,I,B,J,_), selectProc(A,I), selectProc(B,J), A!=B. %\label{constraintFix}
 :- action(A1,I1,A2,I2,B,J,_), selectProc(A1,I1),selectProc(A2,I2), 
       selectProc(B,J), A!=B. %\label{constraintFix2}
 \end{lstlisting}
-Finally, the fixed points of the considered model are exactly the states represented in each remaining answer,
+Finally, the fixed points of the considered model are exactly the states represented in each remaining answer set,
 described by the atoms \texttt{selectProc(A,I)}.
 
 \begin{example}[Fixed points enumeration]
-The PH model of \pref{fig:ph} contains $5$ sorts:
-$a$, $b$, $c$ and $d$ have $2$ processes and $b$ has 3; therefore, the whole model has $2*2*2*3*3 = 72$ states (whether they can be reached or not from a given initial state).
-We can check that this model contains exactly $5$ fixed points: $\PHstate{a_1, b_0, c_0, d_0, e_1}$, $\PHstate{a_1, b_2, c_0, d_0, e_1}$, $\PHstate{a_1, b_1, c_0, d_0, e_1}$, $\PHstate{a_1, b_0, c_0, d_0, e_0}$, $\PHstate{a_1, b_2, c_0, d_0, e_0}$.
+The PH model of \pref{fig:ph} contains 5 sorts:
+$a$, $b$, $c$ and $d$ have 2 processes while $b$ has 3; therefore, the whole model has $2*2*2*3*3 = 72$ states (whether they can be reached or not from a given initial state).
+We can check that this model contains exactly 5 fixed points: $\PHstate{a_1, b_0, c_0, d_0, e_1}$, $\PHstate{a_1, b_2, c_0, d_0, e_1}$, $\PHstate{a_1, b_1, c_0, d_0, e_1}$, $\PHstate{a_1, b_0, c_0, d_0, e_0}$, $\PHstate{a_1, b_2, c_0, d_0, e_0}$.
 Indeed, there is no playable action in these states so no execution is possible from these. In this example, no other state verifies this property.
 
-If we execute the ASP program detailed above (\refll{selectprocesses}{constraintFix2}),
+If we execute the ASP program detailed above (\refll{selectprocesses}{constraintFix2})
 alongside with the description of the PH model given in \pref{ex:asp-ph} (\refll{ASPprocess1}{actions2}),
-we obtain $8$ answer sets that match the expected result:
+we obtain 5 answer sets that match the expected result.
+The output of \textsc{Clingo} is the following:
 %\begin{changemargin}{-2cm}{-1cm}
 %\scriptsize{ 
+\addtocounter{lstnumber}{-15}
 \begin{lstlisting}[numbers=none]
 Answer: 1
 selectProc("a",1) selectProc("b",0) selectProc("c",0)
@@ -124,3 +99,34 @@ selectProc("d",0) selectProc("e",0)
 %}
 %\end{changemargin}
 \end{example}
+
+In \pref{alg:PH-fixpont} we give an imperative algorithm
+that corresponds to the computation of
+all fixed points in a given PH network.
+We give this algorithm only for educational purposes
+as it may help a reader not accustomed with ASP to understand
+what our implementation intends to do,
+and the complexity of such an enumeration.
+However, it is important to understand that
+such an algorithm is never given to the solver,
+which only considers ASP code as given in \refll{ASPprocess1}{constraintFix2}.
+
+\begin{algorithm}[t]
+  \caption{Enumeration of the fixed points of a PH}
+  \label{alg:PH-fixpont}
+  \begin{itemize}
+    \item[] \textbf{INPUT:} A network $PH=(\PHs,\PHl,\PHa)$
+    \item[] \textbf{OUTPUT:} All the fixed points (\ie steady states or attractors of size 1)
+    \item[] \textbf{Initialization:} $\Delta \longleftarrow \varnothing$ \quad // Will be the set of fixed points
+    \item[] \textbf{Begin:} \\
+      \hspace{0.2cm}  \textbf{\textit{forall}} $\PHst_i \in \PHl$ \textbf{\textit{do}} 
+        \begin{itemize}
+          \item[] Compute the set $A_{\PHst_i}$ of all the playable actions in $\PHst_i$
+          \item[] \textbf{\textit{if}} $A_{\PHst_i} = \varnothing$ \textbf{\textit{then}} \\
+            \hspace{0.5cm}  $\Delta \longleftarrow \Delta \cup \{\PHst_i\}$ \\
+           \textbf{\textit{end if}} 
+        \end{itemize}   
+      \hspace{0.2cm} \textbf{\textit{end forall}} \\    
+      \hspace{0.2cm} \textbf{\textit{return}} $\Delta$    
+  \end{itemize}
+\end{algorithm}
