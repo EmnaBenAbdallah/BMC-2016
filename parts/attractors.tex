@@ -2,8 +2,9 @@
 
 In the previous section we showed a method to enumerate all fixed points.
 In the following, we focus on the more complex kind of minimal trap domains: attractors.
-We describe here how to obtain the set of all attractors of a fixed size;
-obtaining all attractors can be tackled by gradually increasing this size.
+We describe here how to obtain some or all attractors of a fixed size;
+obtaining all attractors of any size
+can be tackled by gradually increasing the considered size.
 
 The computational method to enumerate all attractors of size $N$ in a PH model falls into three stages:
 \begin{enumerate}
@@ -101,7 +102,9 @@ For example, \texttt{state(0..5)} will compute every 6 first successive states, 
 Because the dynamics of a PH is solely described by its actions, identifying the future states requires to first identify the playable actions for each state.
 We recall that an action is playable in a state when all its hitter processes and target process are active in this state (see \pref{def:playableAction}).
 % Therefore, we define an ASP predicate $\texttt{playable(action(A}_\texttt{1}\texttt{,I}_\texttt{1}\texttt{,...,A}_\texttt{k}\texttt{,I}_\texttt{k}\texttt{,B,J,K),S)}$ which is true when the processes  ${\texttt{A}_\texttt{1}}_{\texttt{I}_\texttt{1}}\texttt{,...,}{\texttt{A}_\texttt{k}}_{\texttt{I}_\texttt{k}}$ and $\texttt{B}_\texttt{J}$ are active at state \texttt{S}.
-Therefore, we define an ASP predicate $\texttt{playable(action(A1,I1,...,Ak,Ik,B,J,K),S)}$ which is true when the processes $\texttt{A1}_{\texttt{I1}}$, ..., $\texttt{Ak}_{\texttt{Ik}}$ and $\texttt{BJ}$ are active in state \texttt{S}.
+Therefore, we define an ASP predicate $\texttt{playable(action(A1,I1,...,Ak,Ik,B,J,K),S)}$,
+whose construction is not detailed here,
+which is true when the processes $\texttt{A1}_{\texttt{I1}}$, ..., $\texttt{Ak}_{\texttt{Ik}}$ and $\texttt{B}_\texttt{J}$ are active in state \texttt{S}.
 
 Then, all the possible evolutions of the model can be enumerated by a cardinality rule such as the one of \refl{e2a}:
 this line creates a set of as many predicates as there are possible simulations from the considered initial state,
@@ -122,13 +125,13 @@ while all the processes from all the other sorts
 remain identical in their condition of the previous state (\refll{e5}{e5a}).
 
 \begin{lstlisting}
-1{play(Action,S)}1 :- playable(Action,S), state(S). %\label{e2a} 
-:- 2{play(Action,S)}, state(S). %\label{e2b}
+1 {play(Action,S)} 1 :- playable(Action,S), state(S). %\label{e2a} 
+:- 2 {play(Action,S)}, state(S). %\label{e2b}
 change(B,S+1) :- play(action(_,_,B,_,_),T), state(S). %\label{e3a}
 change(B,S+1) :- play(action(_,_,_,_,B,_,_),T), state(S). %\label{e3b}
-instate(activeProc(B,K),S+1) :-  play(action(_,_,B,_,K),S), state(S).%\label{e4}
-instate(activeProc(B,K),S+1) :-  instate(activeProc(B,K),S),%\label{e5}
-          not change(B,S+1), state(S).%\label{e5a}
+instate(activeProc(B,K),S+1) :- play(action(_,_,B,_,K),S), state(S).%\label{e4}
+instate(activeProc(B,K),S+1) :- instate(activeProc(B,K),S),%\label{e5}
+        not change(B,S+1), state(S).%\label{e5a}
 \end{lstlisting}
 
 The overall result of the pieces of program presented in this subsection
@@ -142,52 +145,105 @@ As a result, it reproduces all sub-STG of size $N$.
 Once a sub-STG is found, it remains to check whether it is a cycle (\ie a loop) or not.
 To do so, we need a predicate \texttt{repeter(P,S1,S2)} (\refll{repeter1}{repeter2}) which is true for each process active in both \texttt{S1} and \texttt{S2}.
 Predicate \texttt{getNbrRepetition(X,S1,S2)} (\refll{getRep1}{getRep2}) then computes the number \texttt{X} of identical active processes between two states \texttt{S1} and \texttt{S2}.
+\begin{lstlisting}
+repeter(P,S1,S2) :- selectProcSt(P,S1), selectProcSt(P,S2), %\label{repeter1}
+        state(S1), state(S2). %\label{repeter2}
+getNbrRepetition(X,S1,S2) :- X={repeter(F,S1,S2)}, S1!=S2, %\label{getRep1}
+        state(S1), state(S2). %\label{getRep2}
+\end{lstlisting}
+
 At this point, determining if there is a loop between \texttt{S1} and \texttt{S2}
 only requires to compare the value \texttt{X} to the total number of sorts in the model:
 if both are equal, it means that \texttt{S1} and \texttt{S2} are identical states.
 In our case, we only need to compare the first (\texttt{S1=0}) and last (\texttt{S2=n}) states of each sub-STG.
-We finally eliminate all sub-STG that are not cycles with the constraint of \refl{loop}.
+Thus, we finally eliminate all sub-STG that are not cycles with the constraint of \refl{loop},
+where the predicate \texttt{loop} is true when both states are identical.
 \begin{lstlisting}
-repeter(P,S1,S2) :- selectProcSt(P,S1), selectProcSt(P,S2), %\label{repeter1}
-state(S1), state(S2). %\label{repeter2}
-getNbrRepetition(X,S1,S2) :- X={repeter(F,S1,S2)}, S1!=S2, %\label{getRep1}
-state(S1), state(S2). %\label{getRep2}
 :- not loop(0, n).  %\label{loop}
 \end{lstlisting}
 
 \subsection{Attractors enumeration}
-\Maxime{Tout le début de cette section n'est pas très clair et mériterait aussi d'être clarifié et reformulé.}
-Since each state of the STG of an automata network has various next states (due to the non-deterministic dynamics), a cyclic sub-STG is not necessarily an attractor. Thus, we first need to determine the presence of a cycle by checking whether the first state and the last state of the sub-STG are the same. Then we check if this sub-STG is an attractor. 
-Filtering the remaining sub-STGs means using a constraint in ASP. Indeed a constraint has many advanges for such NP-Hard problems. Indeed, it permits to decrease the computational time. But to benifit of this specific type of logic rules, we have to think oppositly and present the opposite of what we are looking for. 
-In our case, to say that a cycle is not an attractor, it means that it has at least one state that has a successor which is not apart of it (\refl{existOut}).
-\begin{lstlisting}
-:- existActionOut.  %\label{existOut}
-\end{lstlisting}
-It is necessary now to compute all playble actions for each state $\texttt{S}_\texttt{i}$ between the states \texttt{0} and \texttt{n}. For that we propose a similar rule to \refl{e2a} but with different predicate name and different parameters: \texttt{candidatePlayable(Action,S)}. It is true when an action \texttt{Action} is playable at state \texttt{S} which is between \texttt{0} and \texttt{n}. Also this action should be different from the action that was played in the cycle transforming the system from \texttt{S} to \texttt{S+1} that is also a part of the cycle (\refll{comptPlayAct}{candidatPlayAct}).
+Since each state of a STG of a PH has various next states (due to the non-deterministic dynamics), a cyclic sub-STG is not necessarily an attractor.
+Indeed, some actions may allow the dynamics to escape the cycle;
+in this case, the cycle would not even be a trap domain.
+Thus, another check is required to filter out all remaining cycles
+that can be escaped (and are therefore not attractors).
+Once again, this filtering is performed with a constraint,
+which is the most suitable solution.
+We thus need to describe the behavior that we do not wish to observe
+---~that is, the escaping of a cycle~---
+in order to use in in the constraint in the end.
+
+In order to create the desired constraint,
+it is necessary to compute all playable actions in each state $\texttt{S}$ comprised between the states \texttt{0} and \texttt{n}.
+For that we propose a predicate \texttt{candidatePlayable}
+that is similar to the predicate \texttt{playable} used in \refl{e2a}.
+This is performed by selecting a playable action in any state \texttt{S}
+(\refll{comptPlayAct}{comptPlayActBis})
+which must be different from the action played to create the cycle
+by creating a transition from state \texttt{S} to state \texttt{S+1}
+(\refll{candidatPlayActBis}{candidatPlayAct}).
 \begin{lstlisting}
 firstCandidatePlayable(action(A,I,B,J,K),S) :- action(A,I,B,J,K), %\label{comptPlayAct}
-		selectProcSt(activeProc(B,J),S), selectProcSt(activeProc(A,I),S), 
-		loop(0, n), S>0, S<n, state(S).		
-candidatePlayable(Action1,S) :- firstCandidatePlayable(Action1,S), 
-		playable(Action2,S), Action1!= Action2.	%\label{candidatPlayAct}
+        selectProcSt(activeProc(B,J),S),
+        selectProcSt(activeProc(A,I),S),
+        loop(0, n), state(S), S > 0, S < n. %\label{comptPlayActBis}
+candidatePlayable(Action1,S) :- firstCandidatePlayable(Action1,S), %\label{candidatPlayActBis}
+        playable(Action2,S), Action1 != Action2. %\label{candidatPlayAct}
 \end{lstlisting}
-After finding the candidate playable actions in each state of the cycle, it remains to verify if the result states are already a part of the cycle or if there are new states. Indeed it is possible to have other playable actions in the cycle (\texttt{playableInCycle}, \refll{playIncyc1}{playIncyc3}) but these actions lead to the same states. It confirms that the model indefinitely cycles in these states. Once all playable actions are checked whatever they leads to a state in the cycle or not, the predicate \texttt{existActionOut} is verified when at least one action could envolve the system to a state out of the cycle (\refl{existActOut1}).
+
+After finding the candidate playable actions in each state of the cycle, it remains to verify if the resulting states are already part of the cycle or if they consist in new states.
+Indeed it is possible to have other playable actions in the cycle,
+which is described by the predicate \texttt{playableInCycle}
+(\refll{playIncyc1}{playIncyc3}).
+Such actions are simply “shortcuts” to other states in the same cycle
+and do not contradict the definition of an attractor.
+Here, we are rather interested in the existence of a playable action
+that would allow to escape the cycle
+(\refll{existActOut0}{existActOut1}).
+Provided that we don't want this case to happen,
+the constraint is simply expressed by line \refl{existOut}.
 \begin{lstlisting}
-playableInCycle(action(A,I,B,J,K),S) :- candidatePlayable(action(A,I,B,J,K),S), %\label{playIncyc1}
-	selectProcSt(activeProc(B,K),Si), Si>=0, Si<=n, Si!=S+1, %\label{playIncyc2}
-	getNbrRepetition(X,S,Si), getNbreSorts(Y), Y==X+1, state(Si). %\label{playIncyc3}
-existActionOut :- candidatePlayable(Action,S), not playableInCycle(Action,S). %\label{existActOut1}
+playableInCycle(action(A,I,B,J,K),S) :- %\label{playIncyc1}
+        candidatePlayable(action(A,I,B,J,K),S),
+        selectProcSt(activeProc(B,K),T), T >= 0, T <= n, T != S+1, %\label{playIncyc2}
+        getNbrRepetition(X,S,T), getNbreSorts(X+1), state(T). %\label{playIncyc3}
+existActionOut :- candidatePlayable(Action,S), %\label{existActOut0}
+        not playableInCycle(Action,S). %\label{existActOut1}
+:- existActionOut.  %\label{existOut}
 \end{lstlisting}
 
-At this step, we want to ensure that the considered attractor is of size $N$, and not of a size which is a divisor of $N$. The idea, as described in Algorithm \ref{alg:PH-attractor} and \refll{loopX}{constraintloopX}, is to filter the repeated loops out of the result. For this, we define the predicate \texttt{loopX(S1,S2,X)} which becomes true if there is a loop between the \texttt{X}\textsuperscript{th} successor of \texttt{S1} and the \texttt{X}\textsuperscript{th} successor of \texttt{S2} in the considered succession of states. This predicate is a clue that the same loop may have been traversed twice. In \texttt{notloopX(S1,S2)} we state that there exists at least one \texttt{X}\textsuperscript{th} successor of \texttt{S1} that does not loop back to the \texttt{X}\textsuperscript{th} successor of \texttt{S2}. Finally with the constraint in \refl{constraintloopX}, we eliminate the case of having the repeated loops.
-
+At this point, we managed to enumerate all attractors in a PH
+which size is $N$ or a divisor of $N$.
+Indeed, as is, our method may include repeated cycles in the results;
+for instance, an attractor
+$\PHst_1 \rightarrowtail \PHst_2 \rightarrowtail \PHst_1$ of size $N=2$
+will be listed among the
+attractors of size $N=4$ if repeated twice:
+$\PHst_1 \rightarrowtail \PHst_2 \rightarrowtail \PHst_1 \rightarrowtail \PHst_2 \rightarrowtail \PHst_1$.
+We thus wish to filter out all repeated cycles from the results.
+For this, the predicate \texttt{loopX(S1,S2,X)} of \refl{loopX} becomes true if there is a loop between
+the \texttt{X}\textsuperscript{th} successor of \texttt{S1}
+and the \texttt{X}\textsuperscript{th} successor of \texttt{S2}
+in the considered succession of states.
+This predicate is a clue that the same loop may have been traversed twice.
+Moreover, in \refl{notloopX}, \texttt{notloopX(S1,S2)} states that there exists at least one \texttt{X}\textsuperscript{th} successor of \texttt{S1} that does not loop back to the \texttt{X}\textsuperscript{th} successor of \texttt{S2}.
+Finally, the constraint in \refl{constraintloopX} eliminates all cases where a loop is repeated by using the previously presented predicates.
 \begin{lstlisting}
 loopX(S1,S2,X) :- loop(S1+X, S2+X), 0<=X, X<=S2-S1, state(S1;S2;X). %\label{loopX}
 notloopX(S1,S2) :- not loopX(S1,S2,X), 0<=X, X<=S2-S1, state(S1;S2;X). %\label{notloopX}
 :- loop(S1,S2), loop(S1, S2+(S2-S1)), not notloopX(S1,S2). %\label{constraintloopX}
 \end{lstlisting}
 
-The problem of finding attractors in a multi-valued automata network is NP-hard. However, we have good results when the algorithm \ref{alg:PH-attractor} is developed with ASP \Maxime{Je ne suis pas d'accord : on ne traduit pas cet algorithme en ASP ! On écrit autre chose qui doit nous donner un résultat équivalent, mais ce n'est pas un algorithme impératif}. Indeed, we show in Section \ref{sec:results}, by performing a number of computational experiments on biological networks, that the program can tackle even large systems and return a result in few seconds.
+The problem of finding attractors in a BRN is NP-hard.
+However, the solvers of ASP (namely, \textsc{Clingo} in our case)
+are specialized in tackling such complex problems.
+Next section will be dedicated to the results
+of several computational experiments that we performed on biological networks,
+and we show that our implementation in ASP can handle
+even large systems and return its results in only a few seconds in some cases.
+
+
 
 %
 %
